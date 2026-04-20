@@ -31,6 +31,9 @@ function App() {
       <MapView
         scoredLocations={scoredLocations}
         onPinClick={setSelectedLocation}
+        selectedLocation={selectedLocation}
+        resources={resources}
+        onMapClick={() => setSelectedLocation(null)}
       />
     </div>
   );

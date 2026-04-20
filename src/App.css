@@ -22,3 +22,11 @@ html, body, #root {
   flex: 1;
   height: 100vh;
 }
+
+.emoji-icon {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
