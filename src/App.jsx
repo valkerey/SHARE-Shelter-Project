@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import MapView from './components/MapView';
+import PriorityPanel from './components/PriorityPanel';
+import Sidebar from './components/Sidebar';
 import useDataLoader from './hooks/useDataLoader';
 import { useScoring } from './hooks/useScoring';
 import './App.css';
@@ -35,6 +37,8 @@ function App() {
         resources={resources}
         onMapClick={() => setSelectedLocation(null)}
       />
+      <PriorityPanel priorities={priorities} onUpdate={setPriorities} />
+      <Sidebar location={selectedLocation} onClose={() => setSelectedLocation(null)} />
     </div>
   );
 }
