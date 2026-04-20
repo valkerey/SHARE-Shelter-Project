@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import './LayerPanel.css';
 
 const LOCATION_TYPES = [
@@ -10,17 +9,7 @@ const LOCATION_TYPES = [
   { key: 'user', label: 'My Locations', icon: '📍' },
 ];
 
-export default function LayerPanel({ visibleTypes, onToggle }) {
-  const [open, setOpen] = useState(false);
-
-  if (!open) {
-    return (
-      <button className="layer-open-btn" onClick={() => setOpen(true)}>
-        🗂️ Layers
-      </button>
-    );
-  }
-
+export default function LayerPanel({ visibleTypes, onToggle, onClose }) {
   return (
     <div className="layer-panel">
       <div className="layer-title">Show on Map</div>
@@ -35,7 +24,7 @@ export default function LayerPanel({ visibleTypes, onToggle }) {
           <span className="layer-label">{label}</span>
         </label>
       ))}
-      <button className="layer-close-btn" onClick={() => setOpen(false)}>Done</button>
+      <button className="layer-close-btn" onClick={onClose}>Done</button>
     </div>
   );
 }

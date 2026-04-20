@@ -4,37 +4,23 @@ import './PriorityPanel.css';
 
 const LEVELS = ['low', 'medium', 'high'];
 const LEVEL_LABELS = { low: 'Low', medium: 'Med', high: 'High' };
-const LEVEL_COLORS = { low: '#3b82f6', medium: '#eab308', high: '#22c55e' };
+const LEVEL_COLORS = { low: '#3b82f6', medium: '#fbbf24', high: '#34d399' };
 
-export default function PriorityPanel({ priorities, onUpdate }) {
-  const [open, setOpen] = useState(false);
+export default function PriorityPanel({ priorities, onUpdate, onClose }) {
   const [draft, setDraft] = useState({ ...priorities });
 
-  function handleOpen() {
-    setDraft({ ...priorities });
-    setOpen(true);
+  function handleApply() {
+    onUpdate(draft);
+    onClose();
   }
 
   function handleCancel() {
     setDraft({ ...priorities });
-    setOpen(false);
-  }
-
-  function handleApply() {
-    onUpdate(draft);
-    setOpen(false);
+    onClose();
   }
 
   function handleToggle(category, level) {
     setDraft((prev) => ({ ...prev, [category]: level }));
-  }
-
-  if (!open) {
-    return (
-      <button className="priority-open-btn" onClick={handleOpen}>
-        ⚙️ Set Priorities
-      </button>
-    );
   }
 
   return (
@@ -55,11 +41,7 @@ export default function PriorityPanel({ priorities, onUpdate }) {
                 <button
                   key={level}
                   className={`priority-btn${isActive ? ' active' : ''}`}
-                  style={
-                    isActive
-                      ? { background: LEVEL_COLORS[level] }
-                      : undefined
-                  }
+                  style={isActive ? { background: LEVEL_COLORS[level] } : undefined}
                   onClick={() => handleToggle(key, level)}
                 >
                   {LEVEL_LABELS[level]}

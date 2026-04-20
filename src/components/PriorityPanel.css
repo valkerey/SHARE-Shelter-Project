@@ -1,48 +1,32 @@
-.priority-open-btn {
-  position: absolute;
-  top: 12px;
-  left: 120px;
-  z-index: 1000;
-  background: #1a1a2e;
-  color: #e0e0e0;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  font-family: system-ui, -apple-system, sans-serif;
-}
-
-.priority-open-btn:hover {
-  background: #252540;
-}
-
+/* ─── Priority Panel (dropdown from control bar) ─── */
 .priority-panel {
   position: absolute;
-  top: 12px;
-  left: 120px;
-  z-index: 1000;
-  width: 320px;
-  background: #1a1a2e;
-  color: #e0e0e0;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  font-family: system-ui, -apple-system, sans-serif;
+  top: 50px;
+  left: 56px;
+  z-index: 1001;
+  width: 330px;
+  background: var(--panel-bg);
+  color: var(--text-primary);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--panel-shadow);
+  font-family: var(--font);
+  border: 1px solid var(--panel-border);
+  animation: fadeDropdown 0.15s ease-out;
 }
 
 .priority-panel-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
   margin-bottom: 2px;
+  letter-spacing: -0.2px;
 }
 
 .priority-panel-subtitle {
   font-size: 12px;
-  color: #888;
-  margin-bottom: 14px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
 }
 
 .priority-row {
@@ -53,8 +37,8 @@
 }
 
 .priority-row-icon {
-  font-size: 18px;
-  width: 28px;
+  font-size: 16px;
+  width: 26px;
   text-align: center;
   flex-shrink: 0;
 }
@@ -62,70 +46,75 @@
 .priority-row-label {
   flex: 1;
   font-size: 13px;
-  color: #e0e0e0;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .priority-btn-group {
   display: flex;
-  gap: 4px;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px;
+  border-radius: var(--radius-sm);
 }
 
 .priority-btn {
-  padding: 4px 10px;
+  padding: 4px 11px;
   font-size: 11px;
+  font-weight: 500;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  background: #252540;
-  color: #999;
-  font-family: system-ui, -apple-system, sans-serif;
-  transition: background 0.15s, color 0.15s;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font);
+  transition: background 0.12s, color 0.12s;
 }
 
 .priority-btn:hover {
-  color: #ccc;
+  color: var(--text-secondary);
 }
 
 .priority-btn.active {
   font-weight: 700;
   color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .priority-actions {
   display: flex;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--panel-border);
 }
 
 .priority-apply {
   flex: 1;
-  background: #3b82f6;
+  background: var(--accent);
   color: #fff;
   border: none;
-  padding: 8px 0;
-  border-radius: 6px;
+  padding: 9px 0;
+  border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 600;
+  font-family: var(--font);
   cursor: pointer;
-  font-family: system-ui, -apple-system, sans-serif;
+  transition: background 0.15s;
 }
 
-.priority-apply:hover {
-  background: #2563eb;
-}
+.priority-apply:hover { background: var(--accent-hover); }
 
 .priority-cancel {
-  background: #252540;
-  color: #999;
+  background: var(--panel-bg-raised);
+  color: var(--text-muted);
   border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
+  font-family: var(--font);
   cursor: pointer;
-  font-family: system-ui, -apple-system, sans-serif;
+  transition: color 0.15s;
 }
 
-.priority-cancel:hover {
-  color: #ccc;
-  background: #2d2d4a;
-}
+.priority-cancel:hover { color: var(--text-secondary); }

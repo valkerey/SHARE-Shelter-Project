@@ -1,3 +1,40 @@
+/* ─── Design Tokens ─── */
+:root {
+  --font: 'DM Sans', system-ui, -apple-system, sans-serif;
+
+  /* Panel colors — warm dark */
+  --panel-bg: #1c1c2e;
+  --panel-bg-raised: #24243a;
+  --panel-border: rgba(255, 255, 255, 0.07);
+  --panel-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --panel-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
+
+  /* Text */
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0b8;
+  --text-muted: #6b6b82;
+
+  /* Accent */
+  --accent: #0d9488;
+  --accent-hover: #0f766e;
+  --accent-light: rgba(13, 148, 136, 0.15);
+
+  /* Score colors */
+  --score-great: #34d399;
+  --score-okay: #fbbf24;
+  --score-limited: #f87171;
+
+  /* Actions */
+  --btn-danger: #ef4444;
+  --btn-danger-hover: #dc2626;
+  --link: #67b8f0;
+
+  /* Radius */
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+/* ─── Reset ─── */
 * {
   margin: 0;
   padding: 0;
@@ -8,21 +45,89 @@ html, body, #root {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  font-family: var(--font);
 }
 
+/* ─── Layout ─── */
 .app {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  font-family: system-ui, -apple-system, sans-serif;
+  position: relative;
 }
 
 .map-container {
-  flex: 1;
+  width: 100%;
   height: 100vh;
 }
 
+/* ─── Map Control Bar (top-left, groups Layers + Priorities) ─── */
+.map-controls {
+  position: absolute;
+  top: 14px;
+  left: 56px;
+  z-index: 1000;
+  display: flex;
+  gap: 6px;
+}
+
+.map-ctrl-btn {
+  background: var(--panel-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--panel-border);
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-family: var(--font);
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--panel-shadow-sm);
+  transition: background 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-ctrl-btn:hover {
+  background: var(--panel-bg-raised);
+  color: var(--text-primary);
+}
+
+/* ─── Add Location Button (top-right) ─── */
+.add-location-toggle {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1000;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: var(--font);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  box-shadow: var(--panel-shadow-sm);
+  transition: background 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-location-toggle:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.add-location-toggle.active {
+  background: var(--btn-danger);
+}
+
+.add-location-toggle.active:hover {
+  background: var(--btn-danger-hover);
+}
+
+/* ─── Emoji marker icons ─── */
 .emoji-icon {
   background: none;
   border: none;
@@ -31,32 +136,40 @@ html, body, #root {
   justify-content: center;
 }
 
-/* Add Location toggle button */
-.add-location-toggle {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 1000;
-  padding: 10px 18px;
-  background: #22c55e;
-  color: #fff;
+/* ─── Loading Screen ─── */
+.loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #111122;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading-screen h1 {
+  font-family: var(--font);
+  font-size: 22px;
   font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.loading-screen p {
+  font-family: var(--font);
+  color: var(--text-muted);
   font-size: 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: background 0.15s;
 }
 
-.add-location-toggle:hover {
-  background: #16a34a;
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--panel-bg-raised);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
-.add-location-toggle.active {
-  background: #ef4444;
-}
-
-.add-location-toggle.active:hover {
-  background: #dc2626;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

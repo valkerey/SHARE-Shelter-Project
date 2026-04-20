@@ -24,6 +24,9 @@ function App() {
   const [addCoords, setAddCoords] = useState(null);
   const [editingLocation, setEditingLocation] = useState(null);
 
+  // Control panel state
+  const [openPanel, setOpenPanel] = useState(null); // 'layers' | 'priorities' | null
+
   // Layer visibility
   const [visibleTypes, setVisibleTypes] = useState({
     church: true,
@@ -45,27 +48,21 @@ function App() {
   });
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && locations.length > 0) {
       console.log(`Loaded ${locations.length} locations, ${resources.length} resources`);
-      console.log('Locations:', locations);
-      console.log('Resources:', resources);
-      if (error) console.error('Data load error:', error);
     }
-  }, [loading, locations, resources, error]);
+  }, [loading, locations, resources]);
 
-  // Map click handler — either place a new pin (add mode) or deselect
+  // Map click handler
   function handleMapClick(latlng) {
     if (latlng) {
-      // Add mode click — place pin
       setAddCoords({ lat: latlng.lat, lng: latlng.lng });
       setSelectedLocation(null);
     } else {
-      // Normal click — deselect
       setSelectedLocation(null);
     }
   }
 
-  // Save a new user location
   async function handleSaveNew(data) {
     try {
       const row = {
@@ -82,12 +79,10 @@ function App() {
       };
       const result = await addLocation(row);
       const newId = result?.[0]?.id;
-
       if (data.photo && newId) {
         const photoUrl = await uploadPhoto(newId, data.photo);
         await updateLocation(newId, { photo_url: photoUrl });
       }
-
       await refetchUserLocations();
       setAddCoords(null);
       setAddMode(false);
@@ -96,7 +91,6 @@ function App() {
     }
   }
 
-  // Update an existing user location
   async function handleUpdate(data) {
     if (!editingLocation) return;
     try {
@@ -111,12 +105,10 @@ function App() {
         contact_email: data.contact_email || '',
         contact_website: data.contact_website || '',
       };
-
       if (data.photo) {
         const photoUrl = await uploadPhoto(supabaseId, data.photo);
         updates.photo_url = photoUrl;
       }
-
       await updateLocation(supabaseId, updates);
       await refetchUserLocations();
       setEditingLocation(null);
@@ -126,7 +118,6 @@ function App() {
     }
   }
 
-  // Delete a user location with confirmation
   async function handleDelete(loc) {
     const confirmed = window.confirm(`Delete "${loc.name}"? This cannot be undone.`);
     if (!confirmed) return;
@@ -141,13 +132,14 @@ function App() {
 
   if (loading) {
     return (
-      <div className="app" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="app loading-screen">
+        <div className="loading-spinner" />
+        <h1>SHARE Shelter Map</h1>
         <p>Loading Seattle data...</p>
       </div>
     );
   }
 
-  // Determine which panel to show on the right
   const showSidebar = selectedLocation && !editingLocation && !addCoords;
   const showAddForm = addCoords && !editingLocation;
   const showEditForm = !!editingLocation;
@@ -156,17 +148,49 @@ function App() {
     <div className="app">
       <MapView
         scoredLocations={filteredLocations}
-        onPinClick={setSelectedLocation}
+        onPinClick={(loc) => { setSelectedLocation(loc); setAddCoords(null); setEditingLocation(null); setOpenPanel(null); }}
         selectedLocation={selectedLocation}
         resources={resources}
         onMapClick={handleMapClick}
         addMode={addMode}
         addCoords={addCoords}
       />
-      <LayerPanel visibleTypes={visibleTypes} onToggle={handleToggleType} />
-      <PriorityPanel priorities={priorities} onUpdate={setPriorities} />
 
-      {/* Add Location toggle button */}
+      {/* ─── Top-left control bar ─── */}
+      <div className="map-controls">
+        <button
+          className="map-ctrl-btn"
+          onClick={() => setOpenPanel(openPanel === 'layers' ? null : 'layers')}
+          style={openPanel === 'layers' ? { background: 'var(--panel-bg-raised)', color: 'var(--text-primary)' } : undefined}
+        >
+          <span>🗂️</span> Layers
+        </button>
+        <button
+          className="map-ctrl-btn"
+          onClick={() => setOpenPanel(openPanel === 'priorities' ? null : 'priorities')}
+          style={openPanel === 'priorities' ? { background: 'var(--panel-bg-raised)', color: 'var(--text-primary)' } : undefined}
+        >
+          <span>⚙️</span> Priorities
+        </button>
+      </div>
+
+      {openPanel === 'layers' && (
+        <LayerPanel
+          visibleTypes={visibleTypes}
+          onToggle={handleToggleType}
+          onClose={() => setOpenPanel(null)}
+        />
+      )}
+
+      {openPanel === 'priorities' && (
+        <PriorityPanel
+          priorities={priorities}
+          onUpdate={setPriorities}
+          onClose={() => setOpenPanel(null)}
+        />
+      )}
+
+      {/* ─── Top-right add button ─── */}
       <button
         className={`add-location-toggle ${addMode ? 'active' : ''}`}
         onClick={() => {
@@ -177,12 +201,14 @@ function App() {
             setAddMode(true);
             setSelectedLocation(null);
             setEditingLocation(null);
+            setOpenPanel(null);
           }
         }}
       >
-        {addMode ? '\u2715 Cancel' : '+ Add Location'}
+        {addMode ? '✕ Cancel' : '+ Add Location'}
       </button>
 
+      {/* ─── Right panels ─── */}
       {showSidebar && (
         <Sidebar
           location={selectedLocation}
@@ -197,10 +223,7 @@ function App() {
           lat={addCoords.lat}
           lng={addCoords.lng}
           onSave={handleSaveNew}
-          onCancel={() => {
-            setAddCoords(null);
-            setAddMode(false);
-          }}
+          onCancel={() => { setAddCoords(null); setAddMode(false); }}
         />
       )}
 
