@@ -1,10 +1,13 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import MapView from './components/MapView';
 import useDataLoader from './hooks/useDataLoader';
+import { useScoring } from './hooks/useScoring';
 import './App.css';
 
 function App() {
   const { locations, resources, loading, error } = useDataLoader();
+  const { scoredLocations, priorities, setPriorities } = useScoring(locations, resources);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   useEffect(() => {
     if (!loading) {
@@ -25,7 +28,10 @@ function App() {
 
   return (
     <div className="app">
-      <MapView />
+      <MapView
+        scoredLocations={scoredLocations}
+        onPinClick={setSelectedLocation}
+      />
     </div>
   );
 }
