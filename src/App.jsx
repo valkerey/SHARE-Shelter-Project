@@ -1,10 +1,12 @@
+import MapView from './components/MapView';
+import './App.css';
+
 function App() {
   return (
     <div className="app">
-      <h1>SHARE Shelter Map</h1>
-      <p>Loading...</p>
+      <MapView />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
