@@ -196,3 +196,42 @@
 .legend-dot.gray {
   background: #888;
 }
+
+/* Edit/Delete action buttons */
+.sidebar-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-edit-btn {
+  flex: 1;
+  padding: 8px 14px;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sidebar-edit-btn:hover {
+  background: #2563eb;
+}
+
+.sidebar-delete-btn {
+  flex: 1;
+  padding: 8px 14px;
+  background: #ef4444;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}

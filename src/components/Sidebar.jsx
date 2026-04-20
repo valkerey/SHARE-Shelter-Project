@@ -11,7 +11,7 @@ function formatName(str) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export default function Sidebar({ location, onClose }) {
+export default function Sidebar({ location, onClose, onEdit, onDelete }) {
   if (!location) return null;
 
   const {
@@ -113,6 +113,22 @@ export default function Sidebar({ location, onClose }) {
           15 min walk
         </div>
       </div>
+
+      {/* Edit/Delete actions for user-added locations */}
+      {(onEdit || onDelete) && (
+        <div className="sidebar-actions">
+          {onEdit && (
+            <button className="sidebar-edit-btn" onClick={onEdit}>
+              Edit
+            </button>
+          )}
+          {onDelete && (
+            <button className="sidebar-delete-btn" onClick={onDelete}>
+              Delete
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

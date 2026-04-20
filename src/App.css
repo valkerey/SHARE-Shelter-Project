@@ -30,3 +30,33 @@ html, body, #root {
   align-items: center;
   justify-content: center;
 }
+
+/* Add Location toggle button */
+.add-location-toggle {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1000;
+  padding: 10px 18px;
+  background: #22c55e;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: background 0.15s;
+}
+
+.add-location-toggle:hover {
+  background: #16a34a;
+}
+
+.add-location-toggle.active {
+  background: #ef4444;
+}
+
+.add-location-toggle.active:hover {
+  background: #dc2626;
+}

@@ -46,10 +46,14 @@ function MapController({ selectedLocation }) {
   return null;
 }
 
-function MapClickHandler({ onMapClick }) {
+function MapClickHandler({ onMapClick, addMode }) {
   useMapEvents({
-    click() {
-      onMapClick();
+    click(e) {
+      if (addMode) {
+        onMapClick(e.latlng);
+      } else {
+        onMapClick(null);
+      }
     },
   });
   return null;
@@ -61,6 +65,8 @@ export default function MapView({
   selectedLocation,
   resources = [],
   onMapClick,
+  addMode = false,
+  addCoords = null,
 }) {
   // Filter nearby resources within 1.2km of selected location
   const nearbyResources = selectedLocation
@@ -85,7 +91,7 @@ export default function MapView({
       />
 
       <MapController selectedLocation={selectedLocation} />
-      {onMapClick && <MapClickHandler onMapClick={onMapClick} />}
+      {onMapClick && <MapClickHandler onMapClick={onMapClick} addMode={addMode} />}
 
       {/* Buffer circles when a location is selected */}
       {selectedLocation && (
@@ -137,6 +143,13 @@ export default function MapView({
           </Marker>
         );
       })}
+
+      {/* Temporary marker when adding a new location */}
+      {addCoords && (
+        <Marker position={[addCoords.lat, addCoords.lng]}>
+          <Tooltip permanent>New location — fill in the form →</Tooltip>
+        </Marker>
+      )}
     </MapContainer>
   );
 }
