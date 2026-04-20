@@ -1,7 +1,7 @@
 **SHARE Scope of Project** 
 
 **Purpose:**  
-The purpose of this project is to determine possible new indoor shelter locations throughout the Phinney Ridge and Seattle Central area. We are looking at locations for smaller shelters (10-30 people), preferably near amenities such as transit and school/daycare locations. We will deliver this information in a website that displays the locations of possible shelters, including resources and the ability for the user to add their own locations and a notes function for each location. This website should be able to be utilized for future uses as well.
+The purpose of this project is to determine possible new indoor shelter locations throughout the city of Seattle (west of Lake Washington). We are looking at locations for smaller shelters (10-30 people), preferably near amenities such as transit and school/daycare locations. We will deliver this information in a website that displays the locations of possible shelters, including resources and the ability for the user to add their own locations and a notes function for each location. This website should be able to be utilized for future uses as well.
 
 **Deliverables:**  
 Online smart dashboard map containing

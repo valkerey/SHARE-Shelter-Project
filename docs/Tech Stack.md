@@ -18,58 +18,48 @@ Two key changes from the original plan (static GeoJSON only):
 | **Basemap tiles** | OpenStreetMap / Carto / Stadia Maps | All free tier, no API key hassles |
 | **Frontend framework** | React | Component-based, avoids styling inconsistency issues from last year's team |
 | **Hosting** | GitHub Pages (or Vercel free tier) | Free, deploys from GitHub, no maintenance. GitHub Pages has no commercial-use restriction (Vercel Hobby is non-commercial only) |
-| **Static data** | GeoJSON files | Pre-computed analysis layers (zoning, demographics) exported from desktop GIS |
-| **Live data** | SODA API / ArcGIS REST / GTFS / Overpass API | Always-current resource and amenity layers queried at runtime |
-| **Dynamic data** | Supabase Postgres + PostGIS | User-submitted shelter locations, notes, photos. PostGIS enables native geographic queries |
+| **Live data** | SODA API / ArcGIS REST / GTFS / Overpass API | Potential locations + resources queried at runtime — always current |
+| **Dynamic data** | Supabase Postgres + PostGIS | Admin-added shelter locations, notes, photos. PostGIS enables native geographic queries |
 | **Auth** | Supabase Auth | Email/password login, role-based access via JWT custom claims + Row Level Security (RLS) |
 | **File storage** | Supabase Storage | Shelter photographs per location, with bucket-level MIME type and size restrictions |
-| **Client-side spatial ops** | Turf.js | Buffer/distance calculations in the browser when needed |
-| **Desktop GIS analysis** | ArcGIS Pro (UW license) / QGIS | Heavy spatial analysis done here, results exported as GeoJSON for the web app |
+| **Client-side spatial ops** | Turf.js | Buffers, point-in-polygon resource counting, score calculation — all in browser |
 
 ## Architecture
 
 ```
-+-------------------+     +--------------------+     +-------------------------+
-|   Desktop GIS     |     |   Supabase         |     |   Live Open Data APIs   |
-|  (ArcGIS / QGIS)  |     |  - Postgres+PostGIS|     |  - Seattle SODA API     |
-|                   |     |  - Auth (RLS)      |     |  - King County ArcGIS   |
-|  Heavy analysis   |     |  - Storage (photos)|     |  - KC Metro GTFS        |
-|  Export GeoJSON   |     +--------+-----------+     |  - OSM Overpass API     |
-+--------+----------+              |                 +------------+------------+
-         |                         |                              |
-         v                         v                              v
++--------------------+     +-------------------------+
+|   Supabase         |     |   Live Open Data APIs   |
+|  - Postgres+PostGIS|     |  - Seattle SODA API     |
+|  - Auth (RLS)      |     |  - King County ArcGIS   |
+|  - Storage (photos)|     |  - KC Metro GTFS        |
++--------+-----------+     |  - OSM Overpass API     |
+         |                 +------------+------------+
+         |                              |
+         v                              v
 +------------------------------------------------------------------------+
-|                    React Frontend (Leaflet)                             |
+|                    React Frontend (Leaflet + Turf.js)                   |
 |                                                                        |
-|  Static layers:     Dynamic layers:        Live layers:                |
-|  - Zoning           - Shelter locations    - Food banks (SODA)         |
-|  - Demographics     - Notes per location   - Schools (SODA)           |
-|  - Analysis results - Photos per location  - Transit stops (GTFS)     |
-|  (from GeoJSON)     (from Supabase)        - Churches (Overpass)      |
-|                                            - Hospitals (ArcGIS REST)  |
+|  Dynamic layers:              Live layers:                             |
+|  - Admin-added locations      - Churches (Overpass)                    |
+|  - Notes per location         - Vacant buildings (SODA + permits)     |
+|  - Photos per location        - Food banks (SODA)                     |
+|  (from Supabase)              - Schools (SODA)                        |
+|                               - Transit stops (GTFS)                  |
+|  Client-side analysis:        - Hospitals (ArcGIS REST)               |
+|  - Buffer generation          - Community centers (Overpass)           |
+|  - Resource counting          - Grocery stores (Overpass)              |
+|  - Score calculation          - Libraries (SODA)                      |
+|  (Turf.js)                    - Building permits (SODA)               |
 +------------------------------------------------------------------------+
 |                Hosted on GitHub Pages / Vercel                          |
 +------------------------------------------------------------------------+
 ```
 
-## Data Strategy: Three-Layer Approach
+## Data Strategy: Two-Layer Approach
 
-The app serves three types of data, each with a different freshness and source strategy:
+All spatial analysis (buffers, resource counting, scoring) is done client-side with Turf.js. No desktop GIS or pre-computed static layers needed — all data comes from live APIs or Supabase.
 
-### Layer 1: Static (GeoJSON files)
-
-Data that changes rarely, requires heavy analysis, or doesn't have a live API source.
-
-| Dataset | Source | Update Frequency |
-|:--|:--|:--|
-| Zoning boundaries | King County GIS export | Rarely changes |
-| Parcel data | King County GIS export | Snapshot (see note below) |
-| Demographic / Census data | ACS / Census | Annual |
-| Custom analysis results | ArcGIS Pro output | One-time for project |
-
-> **Note:** King County's parcel datasets are **retiring June 1, 2026**. Download and archive before that date.
-
-### Layer 2: Live APIs (queried at runtime)
+### Layer 1: Live APIs (queried at runtime)
 
 Resource and amenity data that benefits from always being current. Queried from the browser via free public APIs.
 
@@ -91,7 +81,7 @@ Resource and amenity data that benefits from always being current. Queried from 
 - **Overpass API** (OpenStreetMap): Query language for OSM data. Returns POIs like churches, community centers, etc. Free, no key, no ToS restrictions on caching. Docs: [wiki.openstreetmap.org/wiki/Overpass_API](https://wiki.openstreetmap.org/wiki/Overpass_API)
 - **GTFS** (King County Metro / Sound Transit): Static feeds for stops and routes. GTFS-RT available for real-time arrival data. Download at [metro.kingcounty.gov/GTFS/](https://metro.kingcounty.gov/GTFS/) and [soundtransit.org OTD](https://www.soundtransit.org/help-contacts/business-information/open-transit-data-otd/otd-downloads).
 
-### Layer 3: Dynamic (Supabase)
+### Layer 2: Dynamic (Supabase)
 
 User-contributed content managed through the app with role-based access.
 
@@ -122,13 +112,13 @@ We evaluated Apple MapKit JS and Google Maps Places API as alternatives for base
 | Concern | Apple MapKit JS | Google Maps Places API | Our Stack (Open Data) |
 |:--|:--|:--|:--|
 | **Cost** | $99/year (Apple Developer Program required) | Free tier exists but requires billing account (credit card) | $0, no keys or accounts needed |
-| **Desktop GIS analysis** | ToS prohibits caching/storing data | ToS prohibits caching/storing data | No restrictions — download and analyze freely |
+| **Spatial analysis** | ToS prohibits caching/storing data | ToS prohibits caching/storing data | No restrictions — query freely, analyze client-side with Turf.js |
 | **Churches / places of worship** | Not in POI categories | Supported | Supported (OSM Overpass) |
 | **Food banks** | Not in POI categories | Supported | Supported (Seattle SODA) |
 | **Data freshness** | Always current | Always current | Always current (live API queries) |
 | **Zero-budget compliant** | No | Risky (overage charges possible) | Yes |
 
-**Bottom line:** Open data APIs provide the same freshness benefit as Apple/Google, without the cost, ToS restrictions, or POI category gaps. The open APIs also allow data to be downloaded into ArcGIS Pro for spatial analysis — something neither Apple nor Google permits.
+**Bottom line:** Open data APIs provide the same freshness benefit as Apple/Google, without the cost, ToS restrictions, or POI category gaps. All spatial analysis runs client-side with Turf.js — no desktop GIS needed.
 
 ## Cost Estimation
 
@@ -141,7 +131,6 @@ We evaluated Apple MapKit JS and Google Maps Places API as alternatives for base
 | OpenStreetMap / Carto tiles | Free (usage policy) | Low volume | Yes |
 | Open Data APIs (SODA, ArcGIS REST, Overpass, GTFS) | Free, no key required | Low-moderate query volume | Yes |
 | Turf.js / Leaflet | Open-source | N/A | Yes |
-| ArcGIS Pro | UW student license | Desktop only | Yes |
 
 **Caveats:**
 - Supabase free tier **auto-pauses after 7 days of inactivity**. Workaround: a cron job (GitHub Actions) can ping the project to keep it alive.
@@ -177,8 +166,8 @@ We evaluated Apple MapKit JS and Google Maps Places API as alternatives for base
 | Backend | Flask + Render.com | Supabase (BaaS) | No custom server to maintain; auth + DB + storage in one |
 | Database | None (form submissions) | Supabase Postgres + PostGIS | Native spatial data, RLS for role-based access |
 | Auth | None | Supabase Auth | Admin role needed for adding locations |
-| Data freshness | Static only | Static + live APIs + dynamic | Three-layer approach keeps resources current |
-| Scope | City-wide Seattle | Phinney Ridge + Central Area | Neighborhood-specific enables richer detail |
+| Data freshness | Static only | Fully live (APIs + Supabase) | Two-layer approach — no stale data |
+| Scope | City-wide Seattle | City-wide Seattle (west of Lake Washington) | Same city-wide coverage, but with richer data layers and scoring |
 | Frontend | Plain HTML/CSS/JS | React | Component-based, consistent styling |
 
 ## References
