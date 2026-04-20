@@ -122,7 +122,10 @@ export default function MapView({
             color={isSelected ? '#000' : '#fff'}
             weight={isSelected ? 3 : 2}
             eventHandlers={{
-              click: () => onPinClick && onPinClick(loc),
+              click: (e) => {
+                L.DomEvent.stopPropagation(e.originalEvent);
+                if (onPinClick) onPinClick(loc);
+              },
             }}
           >
             <Tooltip>{loc.name} — {loc.score}</Tooltip>

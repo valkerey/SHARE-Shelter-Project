@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import MapView from './components/MapView';
 import PriorityPanel from './components/PriorityPanel';
+import LayerPanel from './components/LayerPanel';
 import Sidebar from './components/Sidebar';
 import AddLocationForm from './components/AddLocationForm';
 import useDataLoader from './hooks/useDataLoader';
@@ -22,6 +23,26 @@ function App() {
   const [addMode, setAddMode] = useState(false);
   const [addCoords, setAddCoords] = useState(null);
   const [editingLocation, setEditingLocation] = useState(null);
+
+  // Layer visibility
+  const [visibleTypes, setVisibleTypes] = useState({
+    church: true,
+    community_center: true,
+    vacant_building: true,
+    public_facility: true,
+    nonprofit: true,
+    user: true,
+  });
+
+  function handleToggleType(key) {
+    setVisibleTypes((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
+  // Filter locations by visible types
+  const filteredLocations = scoredLocations.filter((loc) => {
+    if (loc.source === 'user') return visibleTypes.user !== false;
+    return visibleTypes[loc.type] !== false;
+  });
 
   useEffect(() => {
     if (!loading) {
@@ -134,7 +155,7 @@ function App() {
   return (
     <div className="app">
       <MapView
-        scoredLocations={scoredLocations}
+        scoredLocations={filteredLocations}
         onPinClick={setSelectedLocation}
         selectedLocation={selectedLocation}
         resources={resources}
@@ -142,6 +163,7 @@ function App() {
         addMode={addMode}
         addCoords={addCoords}
       />
+      <LayerPanel visibleTypes={visibleTypes} onToggle={handleToggleType} />
       <PriorityPanel priorities={priorities} onUpdate={setPriorities} />
 
       {/* Add Location toggle button */}
