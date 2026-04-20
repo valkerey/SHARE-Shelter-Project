@@ -5,7 +5,7 @@
  * Returns { locations, resources, loading, error }.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   fetchChurches,
   fetchCommunityFromOSM,
@@ -21,6 +21,7 @@ import {
   fetchCityProperty,
   fetchNonprofitParcels,
 } from '../services/arcgis';
+import { fetchUserLocations } from '../services/supabase-locations';
 
 /** Extract the fulfilled value from a Promise.allSettled result, or []. */
 const val = (result) => (result.status === 'fulfilled' ? result.value : []);
@@ -37,21 +38,22 @@ export default function useDataLoader() {
     async function loadAll() {
       try {
         const results = await Promise.allSettled([
-          // Locations (indices 0-5)
+          // Locations (indices 0-6)
           fetchChurches(),              // 0
           fetchCommunityFromOSM(),      // 1
           fetchCommunityCentersArcGIS(),// 2
           fetchBuildingPermits(),       // 3
           fetchCityProperty(),          // 4
           fetchNonprofitParcels(),      // 5
+          fetchUserLocations(),         // 6
 
-          // Resources (indices 6-11)
-          fetchResourcesFromOSM(),      // 6
-          fetchTransitFromOSM(),        // 7
-          fetchFoodBanks(),             // 8
-          fetchHospitals(),             // 9
-          fetchSchools(),               // 10
-          fetchLibraries(),             // 11
+          // Resources (indices 7-12)
+          fetchResourcesFromOSM(),      // 7
+          fetchTransitFromOSM(),        // 8
+          fetchFoodBanks(),             // 9
+          fetchHospitals(),             // 10
+          fetchSchools(),               // 11
+          fetchLibraries(),             // 12
         ]);
 
         if (cancelled) return;
@@ -70,16 +72,16 @@ export default function useDataLoader() {
           ...val(results[3]),  // building permits
           ...val(results[4]),  // city property
           ...val(results[5]),  // nonprofit parcels
-          // user locations would go here (empty for now)
+          ...val(results[6]),  // user locations (Supabase)
         ];
 
         const allResources = [
-          ...val(results[6]),  // OSM resources (grocery, laundromat, pharmacy)
-          ...val(results[7]),  // transit
-          ...val(results[8]),  // food banks
-          ...val(results[9]),  // hospitals
-          ...val(results[10]), // schools
-          ...val(results[11]), // libraries
+          ...val(results[7]),  // OSM resources (grocery, laundromat, pharmacy)
+          ...val(results[8]),  // transit
+          ...val(results[9]),  // food banks
+          ...val(results[10]), // hospitals
+          ...val(results[11]), // schools
+          ...val(results[12]), // libraries
         ];
 
         setLocations(allLocations);
@@ -108,5 +110,17 @@ export default function useDataLoader() {
     };
   }, []);
 
-  return { locations, resources, loading, error };
+  const refetchUserLocations = useCallback(async () => {
+    try {
+      const userLocs = await fetchUserLocations();
+      setLocations((prev) => [
+        ...prev.filter((loc) => loc.source !== 'user'),
+        ...userLocs,
+      ]);
+    } catch (err) {
+      console.warn('Failed to refetch user locations:', err);
+    }
+  }, []);
+
+  return { locations, resources, loading, error, refetchUserLocations };
 }
