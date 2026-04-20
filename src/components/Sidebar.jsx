@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { RESOURCE_CATEGORIES } from '../config/constants';
+import { upsertContactOverride } from '../services/supabase-locations';
 import './Sidebar.css';
 
 /**
@@ -12,6 +14,14 @@ function formatName(str) {
 }
 
 export default function Sidebar({ location, onClose, onEdit, onDelete }) {
+  const [editingContact, setEditingContact] = useState(false);
+  const [contactDraft, setContactDraft] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    website: '',
+  });
+
   if (!location) return null;
 
   const {
@@ -24,7 +34,27 @@ export default function Sidebar({ location, onClose, onEdit, onDelete }) {
     color,
     innerCounts,
     outerCounts,
+    source,
   } = location;
+
+  function startContactEdit() {
+    setContactDraft({
+      name: contact?.name || '',
+      phone: contact?.phone || '',
+      email: contact?.email || '',
+      website: contact?.website || '',
+    });
+    setEditingContact(true);
+  }
+
+  async function saveContact() {
+    try {
+      await upsertContactOverride(location.id, contactDraft);
+      setEditingContact(false);
+    } catch (err) {
+      console.error('Failed to save contact:', err);
+    }
+  }
 
   return (
     <div className="sidebar">
@@ -37,8 +67,9 @@ export default function Sidebar({ location, onClose, onEdit, onDelete }) {
       <div className="sidebar-header">
         <div className="sidebar-name">{name}</div>
         {address && <div className="sidebar-address">{address}</div>}
-        {contact && (
+        {contact && !editingContact && (
           <div className="sidebar-contact">
+            {contact.name && <div>{contact.name}</div>}
             {contact.phone && <div>{contact.phone}</div>}
             {contact.website && (
               <div>
@@ -52,6 +83,50 @@ export default function Sidebar({ location, onClose, onEdit, onDelete }) {
                 <a href={`mailto:${contact.email}`}>{contact.email}</a>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Inline contact editing for API-sourced locations */}
+        {source !== 'user' && !editingContact && (
+          <button className="sidebar-contact-edit" onClick={startContactEdit}>
+            Edit Contact
+          </button>
+        )}
+
+        {editingContact && (
+          <div className="contact-edit-form">
+            <input
+              type="text"
+              placeholder="Contact name"
+              value={contactDraft.name}
+              onChange={(e) => setContactDraft((d) => ({ ...d, name: e.target.value }))}
+            />
+            <input
+              type="text"
+              placeholder="Phone"
+              value={contactDraft.phone}
+              onChange={(e) => setContactDraft((d) => ({ ...d, phone: e.target.value }))}
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={contactDraft.email}
+              onChange={(e) => setContactDraft((d) => ({ ...d, email: e.target.value }))}
+            />
+            <input
+              type="text"
+              placeholder="Website"
+              value={contactDraft.website}
+              onChange={(e) => setContactDraft((d) => ({ ...d, website: e.target.value }))}
+            />
+            <div className="contact-edit-actions">
+              <button className="contact-save-btn" onClick={saveContact}>
+                Save Contact
+              </button>
+              <button className="contact-cancel-btn" onClick={() => setEditingContact(false)}>
+                Cancel
+              </button>
+            </div>
           </div>
         )}
       </div>
