@@ -1,0 +1,84 @@
+.signin-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signin-modal {
+  background: var(--panel-bg);
+  color: var(--text-primary);
+  padding: 24px;
+  border-radius: 8px;
+  width: 320px;
+  font-family: var(--font);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.signin-modal h3 {
+  margin: 0 0 18px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.signin-modal .form-field {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.signin-modal label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.signin-modal input {
+  background: var(--panel-bg-raised);
+  border: 1px solid var(--panel-border);
+  color: var(--text-primary);
+  padding: 8px 10px;
+  border-radius: 4px;
+  font: inherit;
+}
+
+.signin-error {
+  background: #4a1f1f;
+  color: #ffb4b4;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.signin-modal .form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.signin-submit-btn,
+.signin-cancel-btn {
+  flex: 1;
+  padding: 9px 0;
+  border-radius: 4px;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.signin-submit-btn {
+  background: var(--accent, #c47e3e);
+  color: white;
+}
+
+.signin-cancel-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--panel-border);
+}
