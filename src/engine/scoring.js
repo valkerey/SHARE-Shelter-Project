@@ -42,9 +42,13 @@ export function computeCategoryScore(count, saturationPoint) {
  * Compute a weighted overall score (0-100) from resource counts and priority settings.
  *
  * For each category in RESOURCE_CATEGORIES:
- *   1. Average the per-resource-type scores (using SATURATION_POINTS)
- *   2. Multiply by the priority weight for that category
+ *   1. Take the MAX score across resource types in the category (best-of-type)
+ *   2. Multiply by the priority weight
  *   3. Accumulate into totalWeighted / totalWeight
+ *
+ * Why max instead of average: the question SHARE asks is "is there X nearby?"
+ * — having a saturated bus network shouldn't be penalized just because there's
+ * no light rail. A category is well-served if any of its resources is well-served.
  *
  * Returns Math.round(totalWeighted / totalWeight), or 0 if totalWeight is 0.
  */
@@ -59,19 +63,15 @@ export function computeOverallScore(resourceCounts, priorities) {
     const weight = PRIORITY_MULTIPLIERS[priorityLevel] || 0;
     if (weight === 0) continue;
 
-    // Average score across resource types in this category
-    const resourceTypes = category.resources;
-    let categoryTotal = 0;
-
-    for (const resType of resourceTypes) {
+    let categoryMax = 0;
+    for (const resType of category.resources) {
       const count = resourceCounts[resType] || 0;
       const saturation = SATURATION_POINTS[resType] || 1;
-      categoryTotal += computeCategoryScore(count, saturation);
+      const score = computeCategoryScore(count, saturation);
+      if (score > categoryMax) categoryMax = score;
     }
 
-    const categoryAvg = resourceTypes.length > 0 ? categoryTotal / resourceTypes.length : 0;
-
-    totalWeighted += categoryAvg * weight;
+    totalWeighted += categoryMax * weight;
     totalWeight += weight;
   }
 
