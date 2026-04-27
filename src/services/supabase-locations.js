@@ -5,7 +5,10 @@ import { supabase } from '../config/supabase';
  * Maps each row to the normalized location format used by the app.
  */
 export async function fetchUserLocations() {
-  const { data, error } = await supabase.from('locations').select('*');
+  const { data, error } = await supabase
+    .from('locations')
+    .select('*')
+    .order('id', { ascending: false });
 
   if (error) {
     console.warn('Failed to fetch user locations:', error.message);
@@ -16,6 +19,7 @@ export async function fetchUserLocations() {
     id: `user-${d.id}`,
     supabaseId: d.id,
     source: 'user',
+    status: d.status || 'approved',
     name: d.name,
     type: d.type || 'other',
     lat: d.lat,
@@ -29,6 +33,13 @@ export async function fetchUserLocations() {
       email: d.contact_email || '',
       website: d.contact_website || '',
     },
+    suggestion_mode: d.suggestion_mode || null,
+    submitter: {
+      name: d.submitter_name || '',
+      phone: d.submitter_phone || '',
+      email: d.submitter_email || '',
+    },
+    review_notes: d.review_notes || '',
   }));
 }
 
@@ -73,21 +84,16 @@ export async function deleteLocation(id) {
 
 /**
  * Upload a photo to the 'location-photos' storage bucket.
- * Returns the public URL of the uploaded file.
+ * - prefix: 'pending' for public suggestions, 'approved' for admin adds.
+ * Returns the public URL.
  */
-export async function uploadPhoto(locationId, file) {
-  const path = `${locationId}/${Date.now()}-${file.name}`;
-
+export async function uploadPhoto(locationId, file, prefix = 'approved') {
+  const path = `${prefix}/${locationId}/${Date.now()}-${file.name}`;
   const { error: uploadError } = await supabase.storage
     .from('location-photos')
     .upload(path, file);
-
   if (uploadError) throw uploadError;
-
-  const { data } = supabase.storage
-    .from('location-photos')
-    .getPublicUrl(path);
-
+  const { data } = supabase.storage.from('location-photos').getPublicUrl(path);
   return data.publicUrl;
 }
 
@@ -127,6 +133,66 @@ export async function upsertContactOverride(sourceId, contact) {
     )
     .select();
 
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Insert a public suggestion. RLS enforces required submitter fields and status='pending'.
+ */
+export async function addSuggestion(payload) {
+  const row = {
+    name: payload.name,
+    type: payload.type,
+    lat: payload.lat,
+    lng: payload.lng,
+    address: payload.address || '',
+    notes: payload.notes || '',
+    contact_name: payload.contact_name || '',
+    contact_phone: payload.contact_phone || '',
+    contact_email: payload.contact_email || '',
+    contact_website: payload.contact_website || '',
+    submitter_name: payload.submitter_name,
+    submitter_phone: payload.submitter_phone,
+    submitter_email: payload.submitter_email,
+    suggestion_mode: payload.suggestion_mode,
+    photo_url: payload.photo_url || null,
+    status: 'pending',
+  };
+  const { data, error } = await supabase.from('locations').insert([row]).select();
+  if (error) throw error;
+  return data;
+}
+
+/** Approve a pending suggestion: flip status to 'approved'. */
+export async function approveSuggestion(id) {
+  const { data, error } = await supabase
+    .from('locations')
+    .update({ status: 'approved' })
+    .eq('id', id)
+    .select();
+  if (error) throw error;
+  return data;
+}
+
+/** Reject a pending suggestion with a reason. */
+export async function rejectSuggestion(id, reason) {
+  const { data, error } = await supabase
+    .from('locations')
+    .update({ status: 'rejected', review_notes: reason })
+    .eq('id', id)
+    .select();
+  if (error) throw error;
+  return data;
+}
+
+/** Edit a pending suggestion's fields AND flip status to 'approved' in one update. */
+export async function editAndApprove(id, updates) {
+  const { data, error } = await supabase
+    .from('locations')
+    .update({ ...updates, status: 'approved' })
+    .eq('id', id)
+    .select();
   if (error) throw error;
   return data;
 }
