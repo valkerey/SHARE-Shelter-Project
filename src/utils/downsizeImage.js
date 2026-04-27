@@ -7,6 +7,9 @@ export const MAX_OUTPUT_BYTES = 2 * 1024 * 1024; // 2 MB
  * such that the longest edge is at most MAX_EDGE_PX.
  */
 export function calcResizedDimensions(width, height) {
+  if (width <= 0 || height <= 0) {
+    throw new Error('Invalid image dimensions');
+  }
   const longest = Math.max(width, height);
   if (longest <= MAX_EDGE_PX) return { width, height };
   const scale = MAX_EDGE_PX / longest;

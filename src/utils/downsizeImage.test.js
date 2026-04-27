@@ -27,4 +27,10 @@ describe('calcResizedDimensions', () => {
   it('exposes MAX_EDGE_PX = 1600', () => {
     expect(MAX_EDGE_PX).toBe(1600);
   });
+
+  it('throws on zero or negative dimensions', () => {
+    expect(() => calcResizedDimensions(0, 0)).toThrow();
+    expect(() => calcResizedDimensions(0, 100)).toThrow();
+    expect(() => calcResizedDimensions(100, -1)).toThrow();
+  });
 });
