@@ -123,3 +123,61 @@
 }
 
 .form-cancel-btn:hover { color: var(--text-secondary); }
+
+.mode-picker-prompt {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 6px 0 16px;
+}
+
+.mode-picker-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--panel-bg-raised);
+  border: 1px solid var(--panel-border);
+  color: var(--text-primary);
+  padding: 14px 16px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.mode-picker-btn:hover {
+  border-color: var(--accent, #c47e3e);
+}
+
+.mode-picker-sub {
+  display: block;
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.copy-from-submitter-btn {
+  background: transparent;
+  border: 1px dashed var(--panel-border);
+  color: var(--text-muted);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.copy-from-submitter-btn:hover {
+  color: var(--text-primary);
+  border-style: solid;
+}
+
+.form-help {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin: -4px 0 10px;
+  line-height: 1.4;
+}
