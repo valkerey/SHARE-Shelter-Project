@@ -12,6 +12,7 @@ vi.mock('../config/supabase', () => {
       return { data: { subscription: { unsubscribe: vi.fn() } } };
     }),
     __emit: (event, session) => listeners.forEach((cb) => cb(event, session)),
+    __clearListeners: () => listeners.splice(0),
   };
   return { supabase: { auth: fakeAuth } };
 });
@@ -21,6 +22,7 @@ import { supabase } from '../config/supabase';
 
 describe('useAuth', () => {
   beforeEach(() => {
+    supabase.auth.__clearListeners();
     supabase.auth.getSession.mockResolvedValue({ data: { session: null } });
     supabase.auth.signInWithPassword.mockReset();
     supabase.auth.signOut.mockReset();

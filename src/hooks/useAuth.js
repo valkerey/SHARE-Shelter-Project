@@ -8,11 +8,19 @@ export default function useAuth() {
   useEffect(() => {
     let cancelled = false;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (cancelled) return;
-      setSession(data.session ?? null);
-      setLoading(false);
-    });
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        if (cancelled) return;
+        setSession(data.session ?? null);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setSession(null);
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setLoading(false);
+      });
 
     const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession ?? null);
