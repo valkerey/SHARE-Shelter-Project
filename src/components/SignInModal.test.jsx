@@ -39,4 +39,19 @@ describe('SignInModal', () => {
     await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('clears error and fields when modal is reopened', async () => {
+    const onSubmit = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
+    const { rerender } = render(
+      <SignInModal open={true} onSubmit={onSubmit} onClose={() => {}} />
+    );
+    await userEvent.type(screen.getByLabelText(/email/i), 'a@b.c');
+    await userEvent.type(screen.getByLabelText(/password/i), 'pw');
+    await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    expect(await screen.findByText(/invalid email or password/i)).toBeInTheDocument();
+    rerender(<SignInModal open={false} onSubmit={onSubmit} onClose={() => {}} />);
+    rerender(<SignInModal open={true} onSubmit={onSubmit} onClose={() => {}} />);
+    expect(screen.queryByText(/invalid email or password/i)).toBeNull();
+    expect(screen.getByLabelText(/email/i)).toHaveValue('');
+  });
 });

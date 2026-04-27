@@ -47,7 +47,7 @@
   font: inherit;
 }
 
-.signin-error {
+.signin-modal .signin-error {
   background: #4a1f1f;
   color: #ffb4b4;
   padding: 8px 10px;
