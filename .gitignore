@@ -6,3 +6,4 @@ dist/
 priv_docs/
 CLAUDE.md
 .superpowers/
+.worktrees/
