@@ -75,6 +75,10 @@ function App() {
     }
   }, [loading, locations, resources]);
 
+  useEffect(() => {
+    refetchUserLocations();
+  }, [isAdmin, refetchUserLocations]);
+
   // Map click handler
   function handleMapClick(latlng) {
     if (latlng) {
