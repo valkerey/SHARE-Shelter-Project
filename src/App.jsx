@@ -4,6 +4,9 @@ import PriorityPanel from './components/PriorityPanel';
 import LayerPanel from './components/LayerPanel';
 import Sidebar from './components/Sidebar';
 import AddLocationForm from './components/AddLocationForm';
+import useAuth from './hooks/useAuth';
+import SignInButton from './components/SignInButton';
+import SignInModal from './components/SignInModal';
 import useDataLoader from './hooks/useDataLoader';
 import { useScoring } from './hooks/useScoring';
 import {
@@ -23,6 +26,10 @@ function App() {
   const [addMode, setAddMode] = useState(false);
   const [addCoords, setAddCoords] = useState(null);
   const [editingLocation, setEditingLocation] = useState(null);
+
+  // Auth state
+  const { user, isAdmin, loading: authLoading, signIn, signOut } = useAuth();
+  const [showSignInModal, setShowSignInModal] = useState(false);
 
   // Control panel state
   const [openPanel, setOpenPanel] = useState(null); // 'layers' | 'priorities' | null
@@ -130,7 +137,7 @@ function App() {
     }
   }
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="app loading-screen">
         <div className="loading-spinner" />
@@ -236,6 +243,22 @@ function App() {
           onCancel={() => setEditingLocation(null)}
         />
       )}
+
+      <SignInButton
+        user={user}
+        onSignInClick={() => setShowSignInModal(true)}
+        onSignOutClick={signOut}
+      />
+
+      <SignInModal
+        open={showSignInModal}
+        onSubmit={async (email, password) => {
+          const result = await signIn(email, password);
+          if (!result.error) setShowSignInModal(false);
+          return result;
+        }}
+        onClose={() => setShowSignInModal(false)}
+      />
     </div>
   );
 }
