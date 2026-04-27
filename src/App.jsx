@@ -202,6 +202,7 @@ function App() {
       await refetchUserLocations();
     } catch (err) {
       console.error('Approve failed:', err);
+      alert('Could not approve. Please try again.');
     }
   }
 
@@ -212,6 +213,7 @@ function App() {
       await refetchUserLocations();
     } catch (err) {
       console.error('Reject failed:', err);
+      alert('Could not reject. Please try again.');
     } finally {
       setRejectingRow(null);
     }
@@ -219,11 +221,14 @@ function App() {
 
   function handleViewOnMap(row) {
     setSelectedLocation(row);
+    setEditingLocation(null);
     setShowReviewQueue(false);
   }
 
   function handleEditApprove(row) {
     setEditingLocation(row);
+    setAddCoords(null);
+    setAddMode(false);
     setShowReviewQueue(false);
   }
 
