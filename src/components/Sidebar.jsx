@@ -13,7 +13,7 @@ function formatName(str) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export default function Sidebar({ location, onClose, onEdit, onDelete }) {
+export default function Sidebar({ location, isAdmin = false, onClose, onEdit, onDelete }) {
   const [editingContact, setEditingContact] = useState(false);
   const [contactDraft, setContactDraft] = useState({
     name: '',
@@ -87,7 +87,7 @@ export default function Sidebar({ location, onClose, onEdit, onDelete }) {
         )}
 
         {/* Inline contact editing for API-sourced locations */}
-        {source !== 'user' && !editingContact && (
+        {isAdmin && source !== 'user' && !editingContact && (
           <button className="sidebar-contact-edit" onClick={startContactEdit}>
             Edit Contact
           </button>
