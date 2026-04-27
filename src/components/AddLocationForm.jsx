@@ -103,7 +103,7 @@ export default function AddLocationForm({
           className="mode-picker-btn"
           onClick={() => setMode('owner')}
         >
-          I&apos;m offering my own property
+          🏠 I&apos;m offering my own property
           <span className="mode-picker-sub">Church, building owner, etc.</span>
         </button>
         <button
@@ -111,7 +111,7 @@ export default function AddLocationForm({
           className="mode-picker-btn"
           onClick={() => setMode('third_party')}
         >
-          I want to suggest a property I know about
+          📍 I want to suggest a property I know about
           <span className="mode-picker-sub">Place I drove past, vacant lot, etc.</span>
         </button>
         <button type="button" className="form-cancel-btn" onClick={onCancel}>
@@ -305,7 +305,7 @@ export default function AddLocationForm({
 
       <div className="form-actions">
         <button type="submit" className="form-save-btn" disabled={saving || !canSubmit}>
-          {saving ? 'Sending...' : submitLabel}
+          {saving ? (isAdmin ? 'Saving...' : 'Sending...') : submitLabel}
         </button>
         <button type="button" className="form-cancel-btn" onClick={onCancel}>
           Cancel
