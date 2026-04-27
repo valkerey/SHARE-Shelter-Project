@@ -11,10 +11,13 @@ import useDataLoader from './hooks/useDataLoader';
 import { useScoring } from './hooks/useScoring';
 import {
   addLocation,
+  addSuggestion,
   updateLocation,
   deleteLocation,
   uploadPhoto,
 } from './services/supabase-locations';
+import { downsizeImage } from './utils/downsizeImage';
+import { hasExceededLimit, recordSubmission } from './utils/rateLimit';
 import './App.css';
 
 function App() {
@@ -28,8 +31,9 @@ function App() {
   const [editingLocation, setEditingLocation] = useState(null);
 
   // Auth state
-  const { user, loading: authLoading, signIn, signOut } = useAuth();
+  const { user, isAdmin, loading: authLoading, signIn, signOut } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [showSuggestionSuccess, setShowSuggestionSuccess] = useState(false);
 
   // Control panel state
   const [openPanel, setOpenPanel] = useState(null); // 'layers' | 'priorities' | null
@@ -72,7 +76,56 @@ function App() {
 
   async function handleSaveNew(data) {
     try {
-      const row = {
+      if (isAdmin) {
+        const row = {
+          name: data.name,
+          type: data.type,
+          lat: data.lat,
+          lng: data.lng,
+          address: data.address || '',
+          notes: data.notes || '',
+          contact_name: data.contact_name || '',
+          contact_phone: data.contact_phone || '',
+          contact_email: data.contact_email || '',
+          contact_website: data.contact_website || '',
+        };
+        const result = await addLocation(row);
+        const newId = result?.[0]?.id;
+        if (data.photo && newId) {
+          const photoUrl = await uploadPhoto(newId, data.photo, 'approved');
+          await updateLocation(newId, { photo_url: photoUrl });
+        }
+        await refetchUserLocations();
+        setAddCoords(null);
+        setAddMode(false);
+        return;
+      }
+
+      // Public path: suggestion
+      if (hasExceededLimit()) {
+        alert('You have submitted several suggestions recently. Please try again later.');
+        return;
+      }
+
+      // Upload photo BEFORE the row insert (RLS forbids public UPDATE, so we can't
+      // attach photo_url after the row exists — must include it in the INSERT payload).
+      let photoUrl = null;
+      if (data.photo) {
+        try {
+          const compressed = await downsizeImage(data.photo);
+          const compressedFile = new File(
+            [compressed],
+            data.photo.name.replace(/\.[^.]+$/, '.jpg'),
+            { type: 'image/jpeg' }
+          );
+          const tempId = (crypto.randomUUID && crypto.randomUUID()) || `${Date.now()}-${Math.random()}`;
+          photoUrl = await uploadPhoto(tempId, compressedFile, 'pending');
+        } catch (err) {
+          console.warn('Photo upload failed (continuing without photo):', err);
+        }
+      }
+
+      const payload = {
         name: data.name,
         type: data.type,
         lat: data.lat,
@@ -83,18 +136,20 @@ function App() {
         contact_phone: data.contact_phone || '',
         contact_email: data.contact_email || '',
         contact_website: data.contact_website || '',
+        submitter_name: data.submitter_name,
+        submitter_phone: data.submitter_phone,
+        submitter_email: data.submitter_email,
+        suggestion_mode: data.suggestion_mode,
+        photo_url: photoUrl,
       };
-      const result = await addLocation(row);
-      const newId = result?.[0]?.id;
-      if (data.photo && newId) {
-        const photoUrl = await uploadPhoto(newId, data.photo);
-        await updateLocation(newId, { photo_url: photoUrl });
-      }
-      await refetchUserLocations();
+      await addSuggestion(payload);
+      recordSubmission();
       setAddCoords(null);
       setAddMode(false);
+      setShowSuggestionSuccess(true);
     } catch (err) {
       console.error('Failed to save location:', err);
+      alert('Could not save. Please try again.');
     }
   }
 
@@ -212,7 +267,7 @@ function App() {
           }
         }}
       >
-        {addMode ? '✕ Cancel' : '+ Add Location'}
+        {addMode ? '✕ Cancel' : isAdmin ? '+ Add Location' : '+ Suggest a Location'}
       </button>
 
       {/* ─── Right panels ─── */}
@@ -229,6 +284,7 @@ function App() {
         <AddLocationForm
           lat={addCoords.lat}
           lng={addCoords.lng}
+          isAdmin={isAdmin}
           onSave={handleSaveNew}
           onCancel={() => { setAddCoords(null); setAddMode(false); }}
         />
@@ -239,6 +295,7 @@ function App() {
           lat={editingLocation.lat}
           lng={editingLocation.lng}
           initialData={editingLocation}
+          isAdmin={isAdmin}
           onSave={handleUpdate}
           onCancel={() => setEditingLocation(null)}
         />
@@ -249,6 +306,24 @@ function App() {
         onSignInClick={() => setShowSignInModal(true)}
         onSignOutClick={signOut}
       />
+
+      {showSuggestionSuccess && (
+        <div className="signin-overlay" role="dialog" aria-modal="true">
+          <div className="signin-modal">
+            <h3>Thanks!</h3>
+            <p>Your suggestion has been sent. SHARE will review it and reach out by email.</p>
+            <div className="form-actions">
+              <button
+                type="button"
+                className="signin-submit-btn"
+                onClick={() => setShowSuggestionSuccess(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showSignInModal && (
         <SignInModal
