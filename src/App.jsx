@@ -7,11 +7,16 @@ import AddLocationForm from './components/AddLocationForm';
 import useAuth from './hooks/useAuth';
 import SignInButton from './components/SignInButton';
 import SignInModal from './components/SignInModal';
+import ReviewQueuePanel from './components/ReviewQueuePanel';
+import RejectReasonModal from './components/RejectReasonModal';
 import useDataLoader from './hooks/useDataLoader';
 import { useScoring } from './hooks/useScoring';
 import {
   addLocation,
   addSuggestion,
+  approveSuggestion,
+  rejectSuggestion,
+  editAndApprove,
   updateLocation,
   deleteLocation,
   uploadPhoto,
@@ -34,6 +39,8 @@ function App() {
   const { user, isAdmin, loading: authLoading, signIn, signOut } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showSuggestionSuccess, setShowSuggestionSuccess] = useState(false);
+  const [showReviewQueue, setShowReviewQueue] = useState(false);
+  const [rejectingRow, setRejectingRow] = useState(null);
 
   // Control panel state
   const [openPanel, setOpenPanel] = useState(null); // 'layers' | 'priorities' | null
@@ -57,6 +64,10 @@ function App() {
     if (loc.source === 'user') return visibleTypes.user !== false;
     return visibleTypes[loc.type] !== false;
   });
+
+  const pendingLocations = scoredLocations.filter(
+    (loc) => loc.source === 'user' && loc.status === 'pending'
+  );
 
   useEffect(() => {
     if (!loading && locations.length > 0) {
@@ -168,16 +179,52 @@ function App() {
         contact_website: data.contact_website || '',
       };
       if (data.photo) {
-        const photoUrl = await uploadPhoto(supabaseId, data.photo);
+        const photoUrl = await uploadPhoto(supabaseId, data.photo, 'approved');
         updates.photo_url = photoUrl;
       }
-      await updateLocation(supabaseId, updates);
+      if (editingLocation.status === 'pending') {
+        await editAndApprove(supabaseId, updates);
+      } else {
+        await updateLocation(supabaseId, updates);
+      }
       await refetchUserLocations();
       setEditingLocation(null);
       setSelectedLocation(null);
     } catch (err) {
       console.error('Failed to update location:', err);
     }
+  }
+
+  async function handleApprove(row) {
+    if (!window.confirm(`Approve "${row.name}"?`)) return;
+    try {
+      await approveSuggestion(row.supabaseId);
+      await refetchUserLocations();
+    } catch (err) {
+      console.error('Approve failed:', err);
+    }
+  }
+
+  async function handleRejectConfirm(reason) {
+    if (!rejectingRow) return;
+    try {
+      await rejectSuggestion(rejectingRow.supabaseId, reason);
+      await refetchUserLocations();
+    } catch (err) {
+      console.error('Reject failed:', err);
+    } finally {
+      setRejectingRow(null);
+    }
+  }
+
+  function handleViewOnMap(row) {
+    setSelectedLocation(row);
+    setShowReviewQueue(false);
+  }
+
+  function handleEditApprove(row) {
+    setEditingLocation(row);
+    setShowReviewQueue(false);
   }
 
   async function handleDelete(loc) {
@@ -270,6 +317,16 @@ function App() {
         {addMode ? '✕ Cancel' : isAdmin ? '+ Add Location' : '+ Suggest a Location'}
       </button>
 
+      {isAdmin && (
+        <button
+          className="add-location-toggle"
+          style={{ top: 56 }}
+          onClick={() => setShowReviewQueue((s) => !s)}
+        >
+          📋 Pending ({pendingLocations.length})
+        </button>
+      )}
+
       {/* ─── Right panels ─── */}
       {showSidebar && (
         <Sidebar
@@ -306,6 +363,25 @@ function App() {
         onSignInClick={() => setShowSignInModal(true)}
         onSignOutClick={signOut}
       />
+
+      {isAdmin && showReviewQueue && (
+        <ReviewQueuePanel
+          pending={pendingLocations}
+          onView={handleViewOnMap}
+          onApprove={handleApprove}
+          onReject={(row) => setRejectingRow(row)}
+          onEditApprove={handleEditApprove}
+          onClose={() => setShowReviewQueue(false)}
+        />
+      )}
+
+      {rejectingRow && (
+        <RejectReasonModal
+          open={true}
+          onConfirm={handleRejectConfirm}
+          onCancel={() => setRejectingRow(null)}
+        />
+      )}
 
       {showSuggestionSuccess && (
         <div className="signin-overlay" role="dialog" aria-modal="true">
