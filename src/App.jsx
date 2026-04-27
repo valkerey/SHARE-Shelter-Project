@@ -337,8 +337,8 @@ function App() {
         <Sidebar
           location={selectedLocation}
           onClose={() => setSelectedLocation(null)}
-          onEdit={selectedLocation.source === 'user' ? () => setEditingLocation(selectedLocation) : undefined}
-          onDelete={selectedLocation.source === 'user' ? () => handleDelete(selectedLocation) : undefined}
+          onEdit={isAdmin && selectedLocation.source === 'user' ? () => setEditingLocation(selectedLocation) : undefined}
+          onDelete={isAdmin && selectedLocation.source === 'user' ? () => handleDelete(selectedLocation) : undefined}
         />
       )}
 
