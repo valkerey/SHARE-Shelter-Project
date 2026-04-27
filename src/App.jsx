@@ -28,7 +28,7 @@ function App() {
   const [editingLocation, setEditingLocation] = useState(null);
 
   // Auth state
-  const { user, isAdmin, loading: authLoading, signIn, signOut } = useAuth();
+  const { user, loading: authLoading, signIn, signOut } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
 
   // Control panel state
@@ -250,15 +250,17 @@ function App() {
         onSignOutClick={signOut}
       />
 
-      <SignInModal
-        open={showSignInModal}
-        onSubmit={async (email, password) => {
-          const result = await signIn(email, password);
-          if (!result.error) setShowSignInModal(false);
-          return result;
-        }}
-        onClose={() => setShowSignInModal(false)}
-      />
+      {showSignInModal && (
+        <SignInModal
+          open={true}
+          onSubmit={async (email, password) => {
+            const result = await signIn(email, password);
+            if (!result.error) setShowSignInModal(false);
+            return result;
+          }}
+          onClose={() => setShowSignInModal(false)}
+        />
+      )}
     </div>
   );
 }

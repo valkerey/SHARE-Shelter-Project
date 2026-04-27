@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './SignInModal.css';
 
 export default function SignInModal({ open, onSubmit, onClose }) {
@@ -6,15 +6,6 @@ export default function SignInModal({ open, onSubmit, onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (open) {
-      setEmail('');
-      setPassword('');
-      setError(null);
-      setSubmitting(false);
-    }
-  }, [open]);
 
   if (!open) return null;
 
