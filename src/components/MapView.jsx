@@ -112,15 +112,17 @@ export default function MapView({
       {/* Scored location pins */}
       {scoredLocations.map((loc) => {
         const isSelected = selectedLocation && selectedLocation.id === loc.id;
+        const isPending = loc.status === 'pending';
         return (
           <CircleMarker
             key={loc.id}
             center={[loc.lat, loc.lng]}
             radius={8}
             fillColor={loc.color}
-            fillOpacity={isSelected ? 1 : 0.8}
+            fillOpacity={isPending ? 0.35 : isSelected ? 1 : 0.8}
             color={isSelected ? '#000' : '#fff'}
             weight={isSelected ? 3 : 2}
+            dashArray={isPending ? '4 3' : null}
             eventHandlers={{
               click: (e) => {
                 L.DomEvent.stopPropagation(e.originalEvent);
@@ -128,7 +130,10 @@ export default function MapView({
               },
             }}
           >
-            <Tooltip>{loc.name} — {loc.score}</Tooltip>
+            <Tooltip>
+              {loc.name} — {loc.score}
+              {isPending ? ' (pending)' : ''}
+            </Tooltip>
           </CircleMarker>
         );
       })}
