@@ -39,6 +39,7 @@ function App() {
   const { user, isAdmin, loading: authLoading, signIn, signOut } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showSuggestionSuccess, setShowSuggestionSuccess] = useState(false);
+  const [successEmail, setSuccessEmail] = useState('');
   const [showReviewQueue, setShowReviewQueue] = useState(false);
   const [rejectingRow, setRejectingRow] = useState(null);
 
@@ -61,6 +62,7 @@ function App() {
 
   // Filter locations by visible types
   const filteredLocations = scoredLocations.filter((loc) => {
+    if (loc.source === 'user' && loc.status === 'rejected') return false;
     if (loc.source === 'user') return visibleTypes.user !== false;
     return visibleTypes[loc.type] !== false;
   });
@@ -159,6 +161,7 @@ function App() {
       };
       await addSuggestion(payload);
       recordSubmission();
+      setSuccessEmail(data.submitter_email || '');
       setAddCoords(null);
       setAddMode(false);
       setShowSuggestionSuccess(true);
@@ -226,7 +229,6 @@ function App() {
   function handleViewOnMap(row) {
     setSelectedLocation(row);
     setEditingLocation(null);
-    setShowReviewQueue(false);
   }
 
   function handleEditApprove(row) {
@@ -394,10 +396,18 @@ function App() {
       )}
 
       {showSuggestionSuccess && (
-        <div className="signin-overlay" role="dialog" aria-modal="true">
+        <div
+          className="signin-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="suggestion-success-title"
+        >
           <div className="signin-modal">
-            <h3>Thanks!</h3>
-            <p>Your suggestion has been sent. SHARE will review it and reach out by email.</p>
+            <h3 id="suggestion-success-title">Thanks!</h3>
+            <p>
+              Your suggestion has been sent. SHARE will review it and reach out
+              {successEmail ? ` at ${successEmail}` : ' by email'}.
+            </p>
             <div className="form-actions">
               <button
                 type="button"

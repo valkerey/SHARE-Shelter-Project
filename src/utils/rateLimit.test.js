@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { recordSubmission, hasExceededLimit, MAX_PER_HOUR, STORAGE_KEY } from './rateLimit';
 
 describe('rateLimit', () => {
