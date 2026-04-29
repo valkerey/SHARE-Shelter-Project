@@ -6,12 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  fetchChurches,
-  fetchCommunityFromOSM,
-  fetchResourcesFromOSM,
-  fetchTransitFromOSM,
-} from '../services/overpass';
+import { fetchAllFromOSM } from '../services/overpass';
 import { fetchFoodBanks, fetchBuildingPermits } from '../services/soda';
 import {
   fetchHospitals,
@@ -55,23 +50,26 @@ export default function useDataLoader() {
 
     async function loadAll() {
       try {
+        // One combined Overpass request (rate-limited host); fan out into the
+        // four category slots below.
+        const osm = fetchAllFromOSM();
         const results = await Promise.allSettled([
           // Locations (indices 0-6)
-          fetchChurches(),              // 0
-          fetchCommunityFromOSM(),      // 1
-          fetchCommunityCentersArcGIS(),// 2
-          fetchBuildingPermits(),       // 3
-          fetchCityProperty(),          // 4
-          fetchNonprofitParcels(),      // 5
-          fetchUserLocations(),         // 6
+          osm.then((r) => r.churches),          // 0
+          osm.then((r) => r.communityCenters),  // 1
+          fetchCommunityCentersArcGIS(),        // 2
+          fetchBuildingPermits(),               // 3
+          fetchCityProperty(),                  // 4
+          fetchNonprofitParcels(),              // 5
+          fetchUserLocations(),                 // 6
 
           // Resources (indices 7-12)
-          fetchResourcesFromOSM(),      // 7
-          fetchTransitFromOSM(),        // 8
-          fetchFoodBanks(),             // 9
-          fetchHospitals(),             // 10
-          fetchSchools(),               // 11
-          fetchLibraries(),             // 12
+          osm.then((r) => r.resources),         // 7
+          osm.then((r) => r.transit),           // 8
+          fetchFoodBanks(),                     // 9
+          fetchHospitals(),                     // 10
+          fetchSchools(),                       // 11
+          fetchLibraries(),                     // 12
         ]);
 
         if (cancelled) return;
