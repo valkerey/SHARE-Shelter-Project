@@ -25,7 +25,7 @@ export default function ControlSidebar({
   }
 
   return (
-    <aside className="control-sidebar">
+    <aside className="control-sidebar glass-panel">
       <section className="cs-section">
         <h3 className="cs-section-title">Show on Map</h3>
         {LOCATION_TYPES.map(({ key, label, icon }) => (

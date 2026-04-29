@@ -10,26 +10,15 @@
   font-family: var(--font);
 }
 
+/* Visual treatment comes from .glass-button — this rule only adds layout
+   tweaks (sizing, spacing) on top. */
 .data-source-toggle {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
-  background: var(--panel-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-sm);
-  font-family: var(--font);
+  padding: 6px 12px;
   font-size: 11px;
   font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--panel-shadow-sm);
-  transition: background 0.15s, transform 0.15s;
-}
-
-.data-source-toggle:hover {
-  background: var(--panel-bg-raised);
-  transform: translateY(-1px);
 }
 
 .data-source-toggle-dot {
@@ -44,12 +33,9 @@
   background: var(--score-limited);
 }
 
+/* Visual treatment comes from .glass-panel — layout/sizing only here. */
 .data-source-popup {
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius);
-  box-shadow: var(--panel-shadow);
-  padding: 10px 12px;
+  padding: 12px 14px;
   min-width: 280px;
   max-width: 320px;
   color: var(--text-primary);

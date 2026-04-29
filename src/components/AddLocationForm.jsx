@@ -132,7 +132,7 @@ export default function AddLocationForm({
   const submitLabel = isAdmin ? 'Save' : 'Send suggestion';
 
   return (
-    <form className="add-location-form" onSubmit={handleSubmit}>
+    <form className="add-location-form glass-panel-strong" onSubmit={handleSubmit}>
       <h3>{title}</h3>
 
       {/* Honeypot: hidden from users, visible to dumb bots */}
