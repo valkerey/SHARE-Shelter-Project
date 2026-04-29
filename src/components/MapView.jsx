@@ -6,6 +6,7 @@ import {
   Circle,
   Marker,
   Tooltip,
+  ZoomControl,
   useMap,
   useMapEvents,
 } from 'react-leaflet';
@@ -83,12 +84,13 @@ export default function MapView({
       center={SEATTLE_CENTER}
       zoom={SEATTLE_ZOOM}
       className="map-container"
-      zoomControl={true}
+      zoomControl={false}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
+      <ZoomControl position="bottomright" />
 
       <MapController selectedLocation={selectedLocation} />
       {onMapClick && <MapClickHandler onMapClick={onMapClick} addMode={addMode} />}
@@ -123,9 +125,10 @@ export default function MapView({
             color={isSelected ? '#000' : '#fff'}
             weight={isSelected ? 3 : 2}
             dashArray={isPending ? '4 3' : null}
+            bubblingMouseEvents={false}
             eventHandlers={{
               click: (e) => {
-                L.DomEvent.stopPropagation(e.originalEvent);
+                L.DomEvent.stopPropagation(e);
                 if (onPinClick) onPinClick(loc);
               },
             }}

@@ -42,7 +42,7 @@ describe('computeCategoryScore', () => {
 });
 
 describe('computeOverallScore', () => {
-  it('computes weighted average correctly', () => {
+  it('computes weighted score correctly', () => {
     const resourceCounts = { bus_stop: 4, food_bank: 2, school: 0 };
     const priorities = { transit: 'high', food: 'high', education: 'low' };
     const score = computeOverallScore(resourceCounts, priorities);
@@ -54,6 +54,18 @@ describe('computeOverallScore', () => {
     const priorities = { transit: 'high', food: 'high' };
     const score = computeOverallScore(resourceCounts, priorities);
     expect(score).toBe(0);
+  });
+  it('uses max-of-type within a category (rare resource does not drag others down)', () => {
+    // Saturated bus_stop, no light_rail -> transit category should still be 100
+    const counts = { bus_stop: 10, light_rail: 0 };
+    const priorities = { transit: 'high' };
+    expect(computeOverallScore(counts, priorities)).toBe(100);
+  });
+  it('credits a category if any resource type is present', () => {
+    // pharmacy present, hospital absent -> health category = 100
+    const counts = { pharmacy: 5 };
+    const priorities = { health: 'high' };
+    expect(computeOverallScore(counts, priorities)).toBe(100);
   });
 });
 

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import MapView from './components/MapView';
-import PriorityPanel from './components/PriorityPanel';
-import LayerPanel from './components/LayerPanel';
+import ControlSidebar from './components/ControlSidebar';
 import Sidebar from './components/Sidebar';
 import AddLocationForm from './components/AddLocationForm';
+import DataSourceStatus from './components/DataSourceStatus';
 import useAuth from './hooks/useAuth';
 import SignInButton from './components/SignInButton';
 import SignInModal from './components/SignInModal';
@@ -26,7 +26,7 @@ import { hasExceededLimit, recordSubmission } from './utils/rateLimit';
 import './App.css';
 
 function App() {
-  const { locations, resources, loading, error, refetchUserLocations } = useDataLoader();
+  const { locations, resources, loading, error, sources, refetchUserLocations } = useDataLoader();
   const { scoredLocations, priorities, setPriorities } = useScoring(locations, resources);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -42,9 +42,6 @@ function App() {
   const [successEmail, setSuccessEmail] = useState('');
   const [showReviewQueue, setShowReviewQueue] = useState(false);
   const [rejectingRow, setRejectingRow] = useState(null);
-
-  // Control panel state
-  const [openPanel, setOpenPanel] = useState(null); // 'layers' | 'priorities' | null
 
   // Layer visibility
   const [visibleTypes, setVisibleTypes] = useState({
@@ -70,6 +67,12 @@ function App() {
   const pendingLocations = scoredLocations.filter(
     (loc) => loc.source === 'user' && loc.status === 'pending'
   );
+
+  // Re-resolve the selected location against the freshly scored list so the
+  // sidebar reflects the latest priority changes (not the snapshot taken at click time).
+  const sidebarLocation = selectedLocation
+    ? scoredLocations.find((l) => l.id === selectedLocation.id) || selectedLocation
+    : null;
 
   useEffect(() => {
     if (!loading && locations.length > 0) {
@@ -268,7 +271,7 @@ function App() {
     <div className="app">
       <MapView
         scoredLocations={filteredLocations}
-        onPinClick={(loc) => { setSelectedLocation(loc); setAddCoords(null); setEditingLocation(null); setOpenPanel(null); }}
+        onPinClick={(loc) => { setSelectedLocation(loc); setAddCoords(null); setEditingLocation(null); }}
         selectedLocation={selectedLocation}
         resources={resources}
         onMapClick={handleMapClick}
@@ -276,39 +279,12 @@ function App() {
         addCoords={addCoords}
       />
 
-      {/* ─── Top-left control bar ─── */}
-      <div className="map-controls">
-        <button
-          className="map-ctrl-btn"
-          onClick={() => setOpenPanel(openPanel === 'layers' ? null : 'layers')}
-          style={openPanel === 'layers' ? { background: 'var(--panel-bg-raised)', color: 'var(--text-primary)' } : undefined}
-        >
-          <span>🗂️</span> Layers
-        </button>
-        <button
-          className="map-ctrl-btn"
-          onClick={() => setOpenPanel(openPanel === 'priorities' ? null : 'priorities')}
-          style={openPanel === 'priorities' ? { background: 'var(--panel-bg-raised)', color: 'var(--text-primary)' } : undefined}
-        >
-          <span>⚙️</span> Priorities
-        </button>
-      </div>
-
-      {openPanel === 'layers' && (
-        <LayerPanel
-          visibleTypes={visibleTypes}
-          onToggle={handleToggleType}
-          onClose={() => setOpenPanel(null)}
-        />
-      )}
-
-      {openPanel === 'priorities' && (
-        <PriorityPanel
-          priorities={priorities}
-          onUpdate={setPriorities}
-          onClose={() => setOpenPanel(null)}
-        />
-      )}
+      <ControlSidebar
+        visibleTypes={visibleTypes}
+        onToggleType={handleToggleType}
+        priorities={priorities}
+        onUpdatePriorities={setPriorities}
+      />
 
       {/* ─── Top-right add button ─── */}
       <button
@@ -321,7 +297,6 @@ function App() {
             setAddMode(true);
             setSelectedLocation(null);
             setEditingLocation(null);
-            setOpenPanel(null);
           }
         }}
       >
@@ -341,11 +316,11 @@ function App() {
       {/* ─── Right panels ─── */}
       {showSidebar && (
         <Sidebar
-          location={selectedLocation}
+          location={sidebarLocation}
           isAdmin={isAdmin}
           onClose={() => setSelectedLocation(null)}
-          onEdit={isAdmin && selectedLocation.source === 'user' ? () => setEditingLocation(selectedLocation) : undefined}
-          onDelete={isAdmin && selectedLocation.source === 'user' ? () => handleDelete(selectedLocation) : undefined}
+          onEdit={isAdmin && sidebarLocation.source === 'user' ? () => setEditingLocation(sidebarLocation) : undefined}
+          onDelete={isAdmin && sidebarLocation.source === 'user' ? () => handleDelete(sidebarLocation) : undefined}
         />
       )}
 
@@ -369,6 +344,8 @@ function App() {
           onCancel={() => setEditingLocation(null)}
         />
       )}
+
+      <DataSourceStatus sources={sources} />
 
       <SignInButton
         user={user}

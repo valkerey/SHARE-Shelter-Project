@@ -60,38 +60,6 @@ html, body, #root {
   height: 100vh;
 }
 
-/* ─── Map Control Bar (top-left, groups Layers + Priorities) ─── */
-.map-controls {
-  position: absolute;
-  top: 14px;
-  left: 56px;
-  z-index: 1000;
-  display: flex;
-  gap: 6px;
-}
-
-.map-ctrl-btn {
-  background: var(--panel-bg);
-  color: var(--text-secondary);
-  border: 1px solid var(--panel-border);
-  padding: 7px 14px;
-  border-radius: var(--radius);
-  font-size: 13px;
-  font-family: var(--font);
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: var(--panel-shadow-sm);
-  transition: background 0.15s, color 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.map-ctrl-btn:hover {
-  background: var(--panel-bg-raised);
-  color: var(--text-primary);
-}
-
 /* ─── Add Location Button (top-right) ─── */
 .add-location-toggle {
   position: absolute;

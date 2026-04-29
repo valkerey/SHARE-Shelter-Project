@@ -1,0 +1,167 @@
+/* ── Liquid Glass: layered blur + luminous edges + soft inner light ── */
+.control-sidebar {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1000;
+  width: 290px;
+  max-height: calc(100vh - 28px);
+
+  /* Liquid glass: darker tint so white text reads on a light basemap,
+     plus a subtle top sheen and heavy blur for the refractive feel. */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.02) 22%,
+      rgba(255, 255, 255, 0) 45%
+    ),
+    radial-gradient(120% 60% at 50% -10%, rgba(255, 255, 255, 0.08), transparent 60%),
+    rgba(20, 20, 36, 0.62);
+  backdrop-filter: blur(36px) saturate(180%);
+  -webkit-backdrop-filter: blur(36px) saturate(180%);
+
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 22px;
+
+  /* Outer drop + inner edge highlights on all four sides simulate the
+     specular glints you see on Apple's liquid glass. */
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.40),
+    0 2px 8px rgba(0, 0, 0, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    inset 1px 0 0 rgba(255, 255, 255, 0.10),
+    inset -1px 0 0 rgba(255, 255, 255, 0.06);
+
+  font-family: var(--font);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  overflow-y: auto;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .control-sidebar {
+    background: rgba(20, 20, 36, 0.94);
+  }
+}
+
+.cs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cs-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.70);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.cs-filter-row,
+.cs-priority-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.cs-filter-row {
+  cursor: pointer;
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cs-filter-row:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.cs-filter-row input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.cs-icon {
+  font-size: 14px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.cs-label {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Pill-shaped segmented control — tiny glass capsule */
+.cs-btn-group {
+  display: flex;
+  gap: 1px;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.28));
+  padding: 2px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.35),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.cs-btn {
+  padding: 2px 7px;
+  font-size: 10.5px;
+  font-weight: 600;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: var(--font);
+  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cs-btn:hover {
+  color: #fff;
+}
+
+.cs-btn.active {
+  font-weight: 700;
+  color: #fff;
+  /* The active pill gets its own glassy gloss */
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Scrollbar — barely there */
+.control-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.control-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.control-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+.control-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}

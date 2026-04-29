@@ -113,6 +113,8 @@ export async function fetchResourcesFromOSM() {
       way["shop"="supermarket"](${BBOX});
       node["shop"="laundry"](${BBOX});
       way["shop"="laundry"](${BBOX});
+      node["amenity"="laundry"](${BBOX});
+      way["amenity"="laundry"](${BBOX});
       node["amenity"="pharmacy"](${BBOX});
       way["amenity"="pharmacy"](${BBOX});
     );
@@ -122,7 +124,7 @@ export async function fetchResourcesFromOSM() {
 
   const typeMap = (tags) => {
     if (tags.shop === 'supermarket') return 'grocery';
-    if (tags.shop === 'laundry') return 'laundromat';
+    if (tags.shop === 'laundry' || tags.amenity === 'laundry') return 'laundromat';
     if (tags.amenity === 'pharmacy') return 'pharmacy';
     return 'unknown';
   };
