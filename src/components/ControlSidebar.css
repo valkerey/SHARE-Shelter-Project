@@ -1,4 +1,6 @@
-/* ── Liquid Glass: layered blur + luminous edges + soft inner light ── */
+/* Layout for the left control panel. Visual treatment comes from the
+   shared .glass-panel utility in App.css — apply that class together
+   with .control-sidebar in the JSX. */
 .control-sidebar {
   position: absolute;
   top: 14px;
@@ -6,47 +8,12 @@
   z-index: 1000;
   width: 290px;
   max-height: calc(100vh - 28px);
-
-  /* Liquid glass: darker tint so white text reads on a light basemap,
-     plus a subtle top sheen and heavy blur for the refractive feel. */
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.10) 0%,
-      rgba(255, 255, 255, 0.02) 22%,
-      rgba(255, 255, 255, 0) 45%
-    ),
-    radial-gradient(120% 60% at 50% -10%, rgba(255, 255, 255, 0.08), transparent 60%),
-    rgba(20, 20, 36, 0.62);
-  backdrop-filter: blur(36px) saturate(180%);
-  -webkit-backdrop-filter: blur(36px) saturate(180%);
-
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 22px;
-
-  /* Outer drop + inner edge highlights on all four sides simulate the
-     specular glints you see on Apple's liquid glass. */
-  box-shadow:
-    0 22px 60px rgba(0, 0, 0, 0.40),
-    0 2px 8px rgba(0, 0, 0, 0.20),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
-    inset 1px 0 0 rgba(255, 255, 255, 0.10),
-    inset -1px 0 0 rgba(255, 255, 255, 0.06);
-
   font-family: var(--font);
   padding: 18px 14px;
   display: flex;
   flex-direction: column;
   gap: 22px;
   overflow-y: auto;
-}
-
-@supports not (backdrop-filter: blur(1px)) {
-  .control-sidebar {
-    background: rgba(20, 20, 36, 0.94);
-  }
 }
 
 .cs-section {

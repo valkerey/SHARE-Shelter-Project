@@ -1,4 +1,5 @@
 /* ─── Add/Edit Location Form ─── */
+/* Layout only — visual treatment comes from .glass-panel-strong. */
 .add-location-form {
   position: absolute;
   top: 0;
@@ -8,11 +9,11 @@
   z-index: 1000;
   overflow-y: auto;
   padding: 20px;
-  background: var(--panel-bg);
   color: var(--text-primary);
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);
   font-family: var(--font);
   animation: slideIn 0.25s ease-out;
+  border-radius: 22px 0 0 22px;
+  border-right: none;
 }
 
 .add-location-form h3 {

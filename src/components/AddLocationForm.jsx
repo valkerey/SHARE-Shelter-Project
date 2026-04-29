@@ -44,7 +44,7 @@ export default function AddLocationForm({ lat, lng, initialData, onSave, onCance
   const title = initialData ? 'Edit Location' : 'Add New Location';
 
   return (
-    <form className="add-location-form" onSubmit={handleSubmit}>
+    <form className="add-location-form glass-panel-strong" onSubmit={handleSubmit}>
       <h3>{title}</h3>
 
       <div className="form-section-label">Location Details</div>

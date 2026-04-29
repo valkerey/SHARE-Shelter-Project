@@ -57,7 +57,7 @@ export default function Sidebar({ location, onClose, onEdit, onDelete }) {
   }
 
   return (
-    <div className="sidebar">
+    <div className="sidebar glass-panel-strong">
       {/* Close button */}
       <button className="sidebar-close" onClick={onClose} aria-label="Close sidebar">
         &times;

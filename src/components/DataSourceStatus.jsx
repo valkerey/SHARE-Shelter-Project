@@ -13,7 +13,7 @@ export default function DataSourceStatus({ sources }) {
   return (
     <div className="data-source-status">
       {open && (
-        <div className="data-source-popup">
+        <div className="data-source-popup glass-panel">
           <div className="data-source-popup-header">
             <span>Data sources</span>
             <span className="data-source-summary">
@@ -36,7 +36,7 @@ export default function DataSourceStatus({ sources }) {
         </div>
       )}
       <button
-        className={`data-source-toggle ${allOk ? 'all-ok' : 'has-fail'}`}
+        className={`data-source-toggle glass-button ${allOk ? 'all-ok' : 'has-fail'}`}
         onClick={() => setOpen((v) => !v)}
         title="Data source status"
       >
