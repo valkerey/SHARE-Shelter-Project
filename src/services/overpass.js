@@ -64,13 +64,21 @@ function toLocation(el, type) {
 
 function toResource(el, resourceType) {
   const { lat, lng } = coords(el);
+  const t = el.tags || {};
   return normalizeResource({
     id: `osm-${el.id}`,
     lat,
     lng,
-    name: el.tags?.name,
+    name: t.name,
+    address: [t['addr:housenumber'], t['addr:street']].filter(Boolean).join(' '),
     resourceType,
     source: 'osm',
+    contact: {
+      phone: t.phone || t['contact:phone'] || '',
+      website: t.website || t['contact:website'] || '',
+      email: t.email || t['contact:email'] || '',
+    },
+    raw: t,
   });
 }
 

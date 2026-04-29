@@ -22,7 +22,10 @@ export function normalizeResource(item) {
     lat: item.lat,
     lng: item.lng,
     name: item.name || '',
+    address: item.address || '',
     resourceType: item.resourceType,
     source: item.source,
+    contact: item.contact || {},
+    raw: item.raw || {},
   };
 }

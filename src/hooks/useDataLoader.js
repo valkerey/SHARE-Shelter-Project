@@ -25,17 +25,17 @@ const val = (result) => (result.status === 'fulfilled' ? result.value : []);
 const SOURCE_LABELS = [
   { label: 'Churches (OSM)', kind: 'location' },
   { label: 'Community centers (OSM)', kind: 'location' },
-  { label: 'Community centers (ArcGIS)', kind: 'location' },
+  { label: 'Community centers (King C. ArcGIS)', kind: 'location' },
   { label: 'Vacant buildings (Seattle SODA)', kind: 'location' },
-  { label: 'City property (ArcGIS)', kind: 'location' },
-  { label: 'Nonprofit parcels (ArcGIS)', kind: 'location' },
+  { label: 'City property (King C. ArcGIS)', kind: 'location' },
+  { label: 'Nonprofit parcels (King C. ArcGIS)', kind: 'location' },
   { label: 'User locations (Supabase)', kind: 'location' },
   { label: 'Amenities (OSM)', kind: 'resource' },
   { label: 'Transit stops (OSM)', kind: 'resource' },
   { label: 'Food banks (Seattle SODA)', kind: 'resource' },
-  { label: 'Hospitals (ArcGIS)', kind: 'resource' },
-  { label: 'Schools (ArcGIS)', kind: 'resource' },
-  { label: 'Libraries (ArcGIS)', kind: 'resource' },
+  { label: 'Hospitals (King C. ArcGIS)', kind: 'resource' },
+  { label: 'Schools (King C. ArcGIS)', kind: 'resource' },
+  { label: 'Libraries (King C. ArcGIS)', kind: 'resource' },
 ];
 
 export default function useDataLoader() {

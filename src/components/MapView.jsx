@@ -5,6 +5,7 @@ import {
   CircleMarker,
   Circle,
   Marker,
+  Popup,
   Tooltip,
   ZoomControl,
   useMap,
@@ -27,6 +28,36 @@ const RESOURCE_ICONS = {
   laundromat: '\u{1F455}',
   pharmacy: '\u{1F48A}',
 };
+
+const RESOURCE_LABELS = {
+  bus_stop: 'Bus Stop',
+  light_rail: 'Light Rail Station',
+  food_bank: 'Food Bank',
+  grocery: 'Grocery Store',
+  school: 'School',
+  hospital: 'Hospital',
+  library: 'Library',
+  community_center: 'Community Center',
+  laundromat: 'Laundromat',
+  pharmacy: 'Pharmacy',
+};
+
+const SOURCE_LABELS = {
+  osm: 'OpenStreetMap',
+  arcgis: 'ArcGIS',
+  arcgis_kingcounty: 'King County GIS',
+  seattle_open_data: 'Seattle Open Data',
+};
+
+function formatWalkTime(meters) {
+  const min = Math.max(1, Math.round(meters / 80));
+  return `${min} min walk`;
+}
+
+function formatDistance(meters) {
+  if (meters < 1000) return `${Math.round(meters)} m`;
+  return `${(meters / 1000).toFixed(1)} km`;
+}
 
 function createEmojiIcon(emoji) {
   return L.divIcon({
@@ -144,13 +175,60 @@ export default function MapView({
       {/* Nearby resource markers */}
       {nearbyResources.map((r, i) => {
         const emoji = RESOURCE_ICONS[r.resourceType] || '\u{1F4CD}';
+        const typeLabel = RESOURCE_LABELS[r.resourceType] || r.resourceType;
+        const displayName = r.name || `Unnamed ${typeLabel}`;
+        const sourceLabel = SOURCE_LABELS[r.source] || r.source;
+        const dist = turf.distance(
+          turf.point([selectedLocation.lng, selectedLocation.lat]),
+          turf.point([r.lng, r.lat]),
+          { units: 'meters' },
+        );
+        const websiteHref =
+          r.contact?.website && /^https?:\/\//.test(r.contact.website)
+            ? r.contact.website
+            : r.contact?.website
+              ? `https://${r.contact.website}`
+              : null;
+        const gmapsQuery = r.name
+          ? `${r.name} ${r.lat},${r.lng}`
+          : `${r.lat},${r.lng}`;
+        const gmapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(gmapsQuery)}`;
         return (
           <Marker
             key={`resource-${r.resourceType}-${i}`}
             position={[r.lat, r.lng]}
             icon={createEmojiIcon(emoji)}
           >
-            <Tooltip>{r.name || r.resourceType}</Tooltip>
+            <Popup className="resource-popup" maxWidth={260} minWidth={220}>
+              <div className="resource-popup-header">
+                <span className="resource-popup-emoji">{emoji}</span>
+                <span className="resource-popup-type">{typeLabel}</span>
+              </div>
+              <div className="resource-popup-name">{displayName}</div>
+              {r.address && <div className="resource-popup-row">{r.address}</div>}
+              <div className="resource-popup-distance">
+                {formatDistance(dist)} away · {formatWalkTime(dist)}
+              </div>
+              <div className="resource-popup-contact">
+                {r.contact?.phone && (
+                  <a href={`tel:${r.contact.phone}`}>{r.contact.phone}</a>
+                )}
+                {websiteHref && (
+                  <a href={websiteHref} target="_blank" rel="noopener noreferrer">
+                    Website
+                  </a>
+                )}
+                {r.contact?.email && (
+                  <a href={`mailto:${r.contact.email}`}>{r.contact.email}</a>
+                )}
+                <a href={gmapsHref} target="_blank" rel="noopener noreferrer">
+                  Open in Google Maps
+                </a>
+              </div>
+              {sourceLabel && (
+                <div className="resource-popup-source">Source: {sourceLabel}</div>
+              )}
+            </Popup>
           </Marker>
         );
       })}

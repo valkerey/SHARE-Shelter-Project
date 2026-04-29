@@ -96,6 +96,7 @@ export async function fetchHospitals() {
         lat: c.lat,
         lng: c.lng,
         name: p.NAME || p.FACILITY || '',
+        address: p.ADDRESS || p.ADDR || '',
         resourceType: 'hospital',
         source: 'arcgis',
         contact: {
@@ -129,6 +130,7 @@ export async function fetchSchools() {
       lat: c.lat,
       lng: c.lng,
       name: p.NAME || p.SCHOOL || p.SchoolName || '',
+      address: p.ADDRESS || p.SiteAddress || p.STREET || '',
       resourceType: 'school',
       source: 'arcgis',
     });
@@ -157,6 +159,7 @@ export async function fetchLibraries() {
         lat: c.lat,
         lng: c.lng,
         name: p.NAME || p.BRANCH || '',
+        address: p.ADDRESS || p.STREET || '',
         resourceType: 'library',
         source: 'arcgis',
       });

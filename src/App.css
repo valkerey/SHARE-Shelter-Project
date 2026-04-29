@@ -215,6 +215,109 @@ html, body, #root {
   justify-content: center;
 }
 
+/* ─── Resource popup (liquid glass) ─── */
+.resource-popup .leaflet-popup-content-wrapper {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02)),
+    var(--glass-tint-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-sm);
+  color: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  padding: 4px;
+}
+
+.resource-popup .leaflet-popup-content {
+  margin: 12px 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #fff;
+}
+
+.resource-popup .leaflet-popup-tip {
+  background: var(--glass-tint-strong);
+  border: 1px solid var(--glass-border);
+}
+
+.resource-popup .leaflet-popup-close-button {
+  color: rgba(255, 255, 255, 0.85);
+  padding: 6px 8px 0 0;
+}
+
+.resource-popup .leaflet-popup-close-button:hover {
+  color: #fff;
+}
+
+.resource-popup-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.resource-popup-emoji {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.resource-popup-type {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.resource-popup-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.resource-popup-row {
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 4px;
+}
+
+.resource-popup-distance {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 6px 0;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.resource-popup-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.resource-popup-contact a {
+  color: #93c5fd;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(147, 197, 253, 0.12);
+  border: 1px solid rgba(147, 197, 253, 0.25);
+}
+
+.resource-popup-contact a:hover {
+  background: rgba(147, 197, 253, 0.22);
+}
+
+.resource-popup-source {
+  margin-top: 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 /* ─── Loading Screen ─── */
 .loading-screen {
   display: flex;

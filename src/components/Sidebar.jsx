@@ -35,7 +35,12 @@ export default function Sidebar({ location, isAdmin = false, onClose, onEdit, on
     innerCounts,
     outerCounts,
     source,
+    lat,
+    lng,
   } = location;
+
+  const gmapsQuery = name && name !== 'Unknown' ? `${name} ${lat},${lng}` : `${lat},${lng}`;
+  const gmapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(gmapsQuery)}`;
 
   function startContactEdit() {
     setContactDraft({
@@ -67,6 +72,14 @@ export default function Sidebar({ location, isAdmin = false, onClose, onEdit, on
       <div className="sidebar-header">
         <div className="sidebar-name">{name}</div>
         {address && <div className="sidebar-address">{address}</div>}
+        <a
+          className="sidebar-gmaps-link"
+          href={gmapsHref}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open in Google Maps
+        </a>
         {contact && !editingContact && (
           <div className="sidebar-contact">
             {contact.name && <div>{contact.name}</div>}

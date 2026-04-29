@@ -22,6 +22,7 @@ export async function fetchFoodBanks() {
         lat: parseFloat(r.latitude),
         lng: parseFloat(r.longitude),
         name: r.common_name || r.name || '',
+        address: r.address || r.addrln1 || '',
         resourceType: 'food_bank',
         source: 'seattle_open_data',
         contact: {
