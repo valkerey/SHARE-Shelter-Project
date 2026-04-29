@@ -32,16 +32,14 @@ export async function fetchFoodBanks() {
     );
 }
 
-// ── Building Permits (expired commercial — potential vacant buildings) ───────
+// ── Building Permits (active commercial permits removing housing — potential vacant buildings) ───
 
 export async function fetchBuildingPermits() {
-  // Permits that expired within the last 12 months
-  const cutoff = new Date();
-  cutoff.setFullYear(cutoff.getFullYear() - 1);
-  const cutoffStr = cutoff.toISOString().slice(0, 10);
-
   const where = encodeURIComponent(
-    `expiresdate < '${cutoffStr}' AND permitclass = 'Commercial' AND latitude IS NOT NULL`,
+    `permitclass = 'Commercial' ` +
+      `AND housingunitsremoved > 0 ` +
+      `AND statuscurrent NOT IN ('Completed', 'Expired', 'Closed', 'Canceled', 'Withdrawn') ` +
+      `AND latitude IS NOT NULL`,
   );
   const url = `${BASE}/76t5-zqzr.json?$where=${where}&$limit=5000`;
   const res = await fetch(url);
@@ -55,7 +53,7 @@ export async function fetchBuildingPermits() {
         id: `soda-permit-${r.applieddate || ''}-${r.permitnum || Math.random().toString(36).slice(2)}`,
         lat: parseFloat(r.latitude),
         lng: parseFloat(r.longitude),
-        name: r.description || 'Expired Commercial Permit',
+        name: `${r.housingunitsremoved} units removed — ${r.statuscurrent || 'unknown status'}`,
         address: r.originaladdress || r.address || '',
         type: 'vacant_building',
         source: 'seattle_open_data',
