@@ -37,25 +37,39 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   cursor: pointer;
   font-family: var(--font);
   text-align: left;
-  border-radius: 6px;
-  transition: color 0.18s ease;
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.92);
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 
 .cs-section-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
   color: #fff;
 }
 
 .cs-chevron {
-  display: inline-block;
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.55);
-  transition: transform 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 13px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  transition: transform 0.2s ease, background 0.18s ease;
   transform: rotate(0deg);
+}
+
+.cs-section-toggle:hover .cs-chevron {
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .cs-chevron.open {
