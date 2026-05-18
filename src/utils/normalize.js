@@ -12,6 +12,7 @@ export function normalizeLocation(item) {
     type: item.type,
     source: item.source,
     contact: item.contact || {},
+    permitStatus: item.permitStatus || '',
     raw: item.raw || {},
   };
 }

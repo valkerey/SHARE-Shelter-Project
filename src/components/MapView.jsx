@@ -49,14 +49,13 @@ const SOURCE_LABELS = {
   seattle_open_data: 'Seattle Open Data',
 };
 
-function formatWalkTime(meters) {
-  const min = Math.max(1, Math.round(meters / 80));
-  return `${min} min walk`;
-}
-
 function formatDistance(meters) {
-  if (meters < 1000) return `${Math.round(meters)} m`;
-  return `${(meters / 1000).toFixed(1)} km`;
+  const miles = meters / 1609.344;
+  if (miles < 0.1) {
+    const feet = Math.round(meters * 3.28084);
+    return `${feet} ft`;
+  }
+  return `${miles.toFixed(2)} mi`;
 }
 
 function createEmojiIcon(emoji) {
@@ -212,7 +211,7 @@ export default function MapView({
               <div className="resource-popup-name">{displayName}</div>
               {r.address && <div className="resource-popup-row">{r.address}</div>}
               <div className="resource-popup-distance">
-                {formatDistance(dist)} away · {formatWalkTime(dist)}
+                {formatDistance(dist)} away
               </div>
               <div className="resource-popup-contact">
                 {r.contact?.phone && (

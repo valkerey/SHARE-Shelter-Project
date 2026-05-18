@@ -37,6 +37,7 @@ export default function Sidebar({ location, isAdmin = false, onClose, onEdit, on
     source,
     lat,
     lng,
+    permitStatus,
   } = location;
 
   const gmapsQuery = name && name !== 'Unknown' ? `${name} ${lat},${lng}` : `${lat},${lng}`;
@@ -71,7 +72,10 @@ export default function Sidebar({ location, isAdmin = false, onClose, onEdit, on
       {/* Header: name, address, contact */}
       <div className="sidebar-header">
         <div className="sidebar-name">{name}</div>
-        {address && <div className="sidebar-address">{address}</div>}
+        {address && address !== name && <div className="sidebar-address">{address}</div>}
+        {type === 'vacant_building' && permitStatus && (
+          <div className="sidebar-permit-status">Building permit: {permitStatus}</div>
+        )}
         <a
           className="sidebar-gmaps-link"
           href={gmapsHref}
@@ -194,11 +198,11 @@ export default function Sidebar({ location, isAdmin = false, onClose, onEdit, on
       <div className="sidebar-legend">
         <div className="legend-item">
           <span className="legend-dot green"></span>
-          5 min walk
+          1/4 mi
         </div>
         <div className="legend-item">
           <span className="legend-dot gray"></span>
-          15 min walk
+          1/2 mi
         </div>
       </div>
 

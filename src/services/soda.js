@@ -49,16 +49,20 @@ export async function fetchBuildingPermits() {
 
   return rows
     .filter((r) => r.latitude && r.longitude)
-    .map((r) =>
-      normalizeLocation({
+    .map((r) => {
+      const addr = r.originaladdress || r.address || '';
+      const units = r.housingunitsremoved;
+      const status = r.statuscurrent || 'unknown status';
+      return normalizeLocation({
         id: `soda-permit-${r.applieddate || ''}-${r.permitnum || Math.random().toString(36).slice(2)}`,
         lat: parseFloat(r.latitude),
         lng: parseFloat(r.longitude),
-        name: `${r.housingunitsremoved} units removed — ${r.statuscurrent || 'unknown status'}`,
-        address: r.originaladdress || r.address || '',
+        name: addr || `Permit ${r.permitnum || ''}`.trim(),
+        address: addr,
         type: 'vacant_building',
         source: 'seattle_open_data',
+        permitStatus: units ? `${units} units removed — ${status}` : status,
         raw: r,
-      }),
-    );
+      });
+    });
 }

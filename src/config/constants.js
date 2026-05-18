@@ -9,8 +9,8 @@ export const SEATTLE_BOUNDS = {
 };
 
 // Buffer distances (meters)
-export const BUFFER_INNER_M = 400;  // ~5-min walk
-export const BUFFER_OUTER_M = 1200; // ~15-min walk
+export const BUFFER_INNER_M = 402;  // 1/4 mile
+export const BUFFER_OUTER_M = 805;  // 1/2 mile
 
 // Resource categories — each has a label, icon emoji, and list of resources
 export const RESOURCE_CATEGORIES = {
