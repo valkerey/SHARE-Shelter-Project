@@ -8,7 +8,11 @@
 
 import { normalizeLocation, normalizeResource } from '../utils/normalize';
 
-const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
+// Proxied through our own /api/overpass route (Vercel Edge function in prod,
+// Vite dev-server proxy locally). Direct browser-to-Overpass calls fail on
+// Vercel because shared-IP rate-limited responses (429/504) come back without
+// CORS headers, surfacing as a CORS error in the console.
+const OVERPASS_URL = '/api/overpass';
 const BBOX = '47.49,-122.44,47.74,-122.24';
 
 const COMBINED_QUERY = `
