@@ -267,6 +267,8 @@ function App() {
   const showAddForm = addCoords && !editingLocation;
   const showEditForm = !!editingLocation;
   const showAddBanner = addMode && !addCoords && !editingLocation;
+  const rightPanelOpen =
+    showSidebar || showAddForm || showEditForm || (isAdmin && showReviewQueue);
 
   return (
     <div className={`app${showAddBanner ? ' app--add-mode' : ''}`}>
@@ -358,11 +360,13 @@ function App() {
 
       <DataSourceStatus sources={sources} />
 
-      <SignInButton
-        user={user}
-        onSignInClick={() => setShowSignInModal(true)}
-        onSignOutClick={signOut}
-      />
+      {!rightPanelOpen && (
+        <SignInButton
+          user={user}
+          onSignInClick={() => setShowSignInModal(true)}
+          onSignOutClick={signOut}
+        />
+      )}
 
       {isAdmin && showReviewQueue && (
         <ReviewQueuePanel
