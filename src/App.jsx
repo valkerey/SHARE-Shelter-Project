@@ -3,6 +3,7 @@ import MapView from './components/MapView';
 import ControlSidebar from './components/ControlSidebar';
 import Sidebar from './components/Sidebar';
 import AddLocationForm from './components/AddLocationForm';
+import AddModeBanner from './components/AddModeBanner';
 import DataSourceStatus from './components/DataSourceStatus';
 import useAuth from './hooks/useAuth';
 import SignInButton from './components/SignInButton';
@@ -43,13 +44,12 @@ function App() {
   const [showReviewQueue, setShowReviewQueue] = useState(false);
   const [rejectingRow, setRejectingRow] = useState(null);
 
-  // Layer visibility
+  // Only churches and vacant buildings are valid host sites; community
+  // centers/public facilities/nonprofits are amenities or aren't host sites at
+  // all, so they don't get a toggle here.
   const [visibleTypes, setVisibleTypes] = useState({
     church: true,
-    community_center: true,
     vacant_building: true,
-    public_facility: true,
-    nonprofit: true,
     user: true,
   });
 
@@ -57,11 +57,11 @@ function App() {
     setVisibleTypes((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
-  // Filter locations by visible types
+  // Whitelist by type so any stale or out-of-scope rows never leak onto the map.
   const filteredLocations = scoredLocations.filter((loc) => {
     if (loc.source === 'user' && loc.status === 'rejected') return false;
     if (loc.source === 'user') return visibleTypes.user !== false;
-    return visibleTypes[loc.type] !== false;
+    return visibleTypes[loc.type] === true;
   });
 
   const pendingLocations = scoredLocations.filter(
@@ -266,9 +266,10 @@ function App() {
   const showSidebar = selectedLocation && !editingLocation && !addCoords;
   const showAddForm = addCoords && !editingLocation;
   const showEditForm = !!editingLocation;
+  const showAddBanner = addMode && !addCoords && !editingLocation;
 
   return (
-    <div className="app">
+    <div className={`app${showAddBanner ? ' app--add-mode' : ''}`}>
       <MapView
         scoredLocations={filteredLocations}
         onPinClick={(loc) => { setSelectedLocation(loc); setAddCoords(null); setEditingLocation(null); }}
@@ -321,6 +322,16 @@ function App() {
           onClose={() => setSelectedLocation(null)}
           onEdit={isAdmin && sidebarLocation.source === 'user' ? () => setEditingLocation(sidebarLocation) : undefined}
           onDelete={isAdmin && sidebarLocation.source === 'user' ? () => handleDelete(sidebarLocation) : undefined}
+        />
+      )}
+
+      {showAddBanner && (
+        <AddModeBanner
+          onPick={({ lat, lng }) => {
+            setAddCoords({ lat, lng });
+            setSelectedLocation(null);
+            setEditingLocation(null);
+          }}
         />
       )}
 

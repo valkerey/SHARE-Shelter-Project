@@ -68,13 +68,18 @@ function createEmojiIcon(emoji) {
   });
 }
 
-function MapController({ selectedLocation }) {
+function MapController({ selectedLocation, addCoords }) {
   const map = useMap();
   useEffect(() => {
     if (selectedLocation) {
       map.flyTo([selectedLocation.lat, selectedLocation.lng], 15, { duration: 0.8 });
     }
   }, [selectedLocation, map]);
+  useEffect(() => {
+    if (addCoords) {
+      map.flyTo([addCoords.lat, addCoords.lng], 17, { duration: 0.8 });
+    }
+  }, [addCoords, map]);
   return null;
 }
 
@@ -123,7 +128,7 @@ export default function MapView({
       />
       <ZoomControl position="bottomright" />
 
-      <MapController selectedLocation={selectedLocation} />
+      <MapController selectedLocation={selectedLocation} addCoords={addCoords} />
       {onMapClick && <MapClickHandler onMapClick={onMapClick} addMode={addMode} />}
 
       {/* Buffer circles when a location is selected */}

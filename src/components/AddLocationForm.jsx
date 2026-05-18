@@ -3,10 +3,7 @@ import './AddLocationForm.css';
 
 const LOCATION_TYPES = [
   { value: 'church', label: 'Church' },
-  { value: 'community_center', label: 'Community Center' },
   { value: 'vacant_building', label: 'Vacant Building' },
-  { value: 'public_facility', label: 'Public Facility' },
-  { value: 'nonprofit', label: 'Nonprofit' },
   { value: 'other', label: 'Other' },
 ];
 

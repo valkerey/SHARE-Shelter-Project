@@ -3,10 +3,7 @@ import './ControlSidebar.css';
 
 const LOCATION_TYPES = [
   { key: 'church', label: 'Churches', icon: '⛪' },
-  { key: 'community_center', label: 'Community Centers', icon: '🏛️' },
   { key: 'vacant_building', label: 'Vacant Buildings', icon: '🏚️' },
-  { key: 'public_facility', label: 'Public Facilities', icon: '🏢' },
-  { key: 'nonprofit', label: 'Nonprofits', icon: '🤝' },
   { key: 'user', label: 'My Locations', icon: '📍' },
 ];
 

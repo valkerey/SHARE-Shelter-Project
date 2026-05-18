@@ -13,8 +13,6 @@ import {
   fetchSchools,
   fetchLibraries,
   fetchCommunityCentersArcGIS,
-  fetchCityProperty,
-  fetchNonprofitParcels,
 } from '../services/arcgis';
 import { fetchUserLocations } from '../services/supabase-locations';
 
@@ -22,13 +20,13 @@ import { fetchUserLocations } from '../services/supabase-locations';
 const val = (result) => (result.status === 'fulfilled' ? result.value : []);
 
 // Labels for each data source — index-aligned with the Promise.allSettled call below.
+// Community centers are fetched but contribute only to the resource layer
+// (amenity scoring), not the host-site location layer.
 const SOURCE_LABELS = [
   { label: 'Churches (OSM)', kind: 'location' },
-  { label: 'Community centers (OSM)', kind: 'location' },
-  { label: 'Community centers (King C. ArcGIS)', kind: 'location' },
+  { label: 'Community centers (OSM)', kind: 'resource' },
+  { label: 'Community centers (King C. ArcGIS)', kind: 'resource' },
   { label: 'Vacant buildings (Seattle SODA)', kind: 'location' },
-  { label: 'City property (King C. ArcGIS)', kind: 'location' },
-  { label: 'Nonprofit parcels (King C. ArcGIS)', kind: 'location' },
   { label: 'User locations (Supabase)', kind: 'location' },
   { label: 'Amenities (OSM)', kind: 'resource' },
   { label: 'Transit stops (OSM)', kind: 'resource' },
@@ -54,22 +52,23 @@ export default function useDataLoader() {
         // four category slots below.
         const osm = fetchAllFromOSM();
         const results = await Promise.allSettled([
-          // Locations (indices 0-6)
+          // Host-site locations: churches + vacant buildings + user submissions.
           osm.then((r) => r.churches),          // 0
+          // Community centers are amenities; they're fetched here only so the
+          // "community" scoring category has data and so they render on the
+          // resource layer.
           osm.then((r) => r.communityCenters),  // 1
           fetchCommunityCentersArcGIS(),        // 2
           fetchBuildingPermits(),               // 3
-          fetchCityProperty(),                  // 4
-          fetchNonprofitParcels(),              // 5
-          fetchUserLocations(),                 // 6
+          fetchUserLocations(),                 // 4
 
-          // Resources (indices 7-12)
-          osm.then((r) => r.resources),         // 7
-          osm.then((r) => r.transit),           // 8
-          fetchFoodBanks(),                     // 9
-          fetchHospitals(),                     // 10
-          fetchSchools(),                       // 11
-          fetchLibraries(),                     // 12
+          // Other resources (amenities + transit).
+          osm.then((r) => r.resources),         // 5
+          osm.then((r) => r.transit),           // 6
+          fetchFoodBanks(),                     // 7
+          fetchHospitals(),                     // 8
+          fetchSchools(),                       // 9
+          fetchLibraries(),                     // 10
         ]);
 
         if (cancelled) return;
@@ -95,16 +94,12 @@ export default function useDataLoader() {
 
         const allLocations = [
           ...val(results[0]),  // churches
-          ...osmCommunityCenters,
-          ...arcgisCommunityCenters,
-          ...val(results[3]),  // building permits
-          ...val(results[4]),  // city property
-          ...val(results[5]),  // nonprofit parcels
-          ...val(results[6]),  // user locations (Supabase)
+          ...val(results[3]),  // vacant buildings (building permits)
+          ...val(results[4]),  // user locations (Supabase)
         ];
 
-        // Community centers are dual-purpose: candidate sites AND amenities.
-        // Re-emit each one as a resource so the "community" scoring category has data.
+        // Community centers feed the "community" scoring category and render
+        // on the resource layer as amenities — never as host-site pins.
         const communityCenterResources = [...osmCommunityCenters, ...arcgisCommunityCenters].map((loc) => ({
           id: `${loc.id}-resource`,
           lat: loc.lat,
@@ -115,12 +110,12 @@ export default function useDataLoader() {
         }));
 
         const allResources = [
-          ...val(results[7]),  // OSM resources (grocery, laundromat, pharmacy)
-          ...val(results[8]),  // transit
-          ...val(results[9]),  // food banks
-          ...val(results[10]), // hospitals
-          ...val(results[11]), // schools
-          ...val(results[12]), // libraries
+          ...val(results[5]),  // OSM resources (grocery, laundromat, pharmacy)
+          ...val(results[6]),  // transit
+          ...val(results[7]),  // food banks
+          ...val(results[8]),  // hospitals
+          ...val(results[9]),  // schools
+          ...val(results[10]), // libraries
           ...communityCenterResources,
         ];
 

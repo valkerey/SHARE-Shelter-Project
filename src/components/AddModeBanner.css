@@ -1,0 +1,97 @@
+.add-mode-banner {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: min(420px, calc(100vw - 180px));
+  padding: 14px 16px 12px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-mode-banner__prompt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.add-mode-banner__pin {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.add-mode-banner__title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.add-mode-banner__sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 2px;
+}
+
+.add-mode-banner__input {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-sm);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.add-mode-banner__input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.add-mode-banner__input:focus {
+  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.add-mode-banner__hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 2px 2px 0;
+}
+
+.add-mode-banner__results {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-sm);
+}
+
+.add-mode-banner__result {
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.3;
+  border-radius: 10px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.add-mode-banner__result.is-active,
+.add-mode-banner__result:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+/* Crosshair cursor across the map when add-mode is on but no pin dropped yet. */
+.app--add-mode .leaflet-container,
+.app--add-mode .leaflet-grab,
+.app--add-mode .leaflet-interactive {
+  cursor: crosshair !important;
+}
