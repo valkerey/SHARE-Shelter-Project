@@ -1,6 +1,6 @@
 .data-source-status {
   position: absolute;
-  bottom: 14px;
+  bottom: 64px;
   left: 14px;
   z-index: 1000;
   display: flex;

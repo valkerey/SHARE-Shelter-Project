@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { RESOURCE_CATEGORIES } from '../config/constants';
 import './ControlSidebar.css';
 
@@ -17,6 +18,8 @@ export default function ControlSidebar({
   priorities,
   onUpdatePriorities,
 }) {
+  const [prioritiesOpen, setPrioritiesOpen] = useState(true);
+
   function setPriority(category, level) {
     onUpdatePriorities({ ...priorities, [category]: level });
   }
@@ -39,28 +42,39 @@ export default function ControlSidebar({
       </section>
 
       <section className="cs-section">
-        <h3 className="cs-section-title">Score Priorities</h3>
-        {Object.entries(RESOURCE_CATEGORIES).map(([key, cat]) => (
-          <div className="cs-priority-row" key={key}>
-            <span className="cs-icon">{cat.icon}</span>
-            <span className="cs-label">{cat.label}</span>
-            <div className="cs-btn-group">
-              {LEVELS.map((level) => {
-                const active = priorities[key] === level;
-                return (
-                  <button
-                    key={level}
-                    className={`cs-btn${active ? ' active' : ''}`}
-                    style={active ? { background: LEVEL_COLORS[level] } : undefined}
-                    onClick={() => setPriority(key, level)}
-                  >
-                    {LEVEL_LABELS[level]}
-                  </button>
-                );
-              })}
+        <button
+          type="button"
+          className="cs-section-title cs-section-toggle"
+          aria-expanded={prioritiesOpen}
+          onClick={() => setPrioritiesOpen((open) => !open)}
+        >
+          <span>Score Priorities</span>
+          <span className={`cs-chevron${prioritiesOpen ? ' open' : ''}`} aria-hidden="true">
+            ▸
+          </span>
+        </button>
+        {prioritiesOpen &&
+          Object.entries(RESOURCE_CATEGORIES).map(([key, cat]) => (
+            <div className="cs-priority-row" key={key}>
+              <span className="cs-icon">{cat.icon}</span>
+              <span className="cs-label">{cat.label}</span>
+              <div className="cs-btn-group">
+                {LEVELS.map((level) => {
+                  const active = priorities[key] === level;
+                  return (
+                    <button
+                      key={level}
+                      className={`cs-btn${active ? ' active' : ''}`}
+                      style={active ? { background: LEVEL_COLORS[level] } : undefined}
+                      onClick={() => setPriority(key, level)}
+                    >
+                      {LEVEL_LABELS[level]}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </section>
     </aside>
   );

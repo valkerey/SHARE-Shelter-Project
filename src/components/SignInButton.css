@@ -2,45 +2,39 @@
 .signin-badge {
   position: fixed;
   bottom: 16px;
-  right: 16px;
+  left: 16px;
   z-index: 1500;
-  font-family: var(--font);
   font-size: 13px;
-  border-radius: 6px;
-  background: var(--panel-bg);
-  color: var(--text-primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .signin-button {
-  padding: 8px 14px;
-  border: 1px solid var(--panel-border);
-  cursor: pointer;
-}
-
-.signin-button:hover {
-  background: var(--panel-bg-raised);
+  padding: 8px 16px;
 }
 
 .signin-badge {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 6px 10px;
-  border: 1px solid var(--panel-border);
+  padding: 6px 12px;
 }
 
 .signin-badge-email {
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 12px;
+  font-weight: 500;
 }
 
 .signin-badge-logout {
   background: transparent;
   border: none;
-  color: var(--accent, #c47e3e);
+  color: rgba(255, 255, 255, 0.95);
   cursor: pointer;
   font: inherit;
+  font-weight: 600;
   padding: 0;
   text-decoration: underline;
+}
+
+.signin-badge-logout:hover {
+  color: #fff;
 }

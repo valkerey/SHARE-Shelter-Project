@@ -159,7 +159,7 @@ html, body, #root {
   position: absolute;
   top: 14px;
   right: 14px;
-  z-index: 1000;
+  z-index: 1001;
   padding: 9px 18px;
   font-size: 13px;
   display: flex;

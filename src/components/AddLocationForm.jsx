@@ -92,7 +92,7 @@ export default function AddLocationForm({
   // Public mode: show mode picker until selected
   if (isPublic && !mode) {
     return (
-      <div className="add-location-form mode-picker">
+      <div className="add-location-form mode-picker glass-panel-strong">
         <h3>Suggest a Location</h3>
         <p className="mode-picker-prompt">What kind of suggestion is this?</p>
         <button

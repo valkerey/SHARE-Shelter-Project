@@ -32,6 +32,36 @@
   padding: 0 4px;
 }
 
+.cs-section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  text-align: left;
+  border-radius: 6px;
+  transition: color 0.18s ease;
+}
+
+.cs-section-toggle:hover {
+  color: #fff;
+}
+
+.cs-chevron {
+  display: inline-block;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  transition: transform 0.18s ease;
+  transform: rotate(0deg);
+}
+
+.cs-chevron.open {
+  transform: rotate(90deg);
+}
+
 .cs-filter-row,
 .cs-priority-row {
   display: flex;
