@@ -1,9 +1,9 @@
 .review-queue-panel {
   position: absolute;
-  top: 0;
+  top: 52px;
   right: 0;
   width: 380px;
-  height: 100vh;
+  height: calc(100vh - 52px);
   z-index: 1000;
   overflow-y: auto;
   padding: 20px;

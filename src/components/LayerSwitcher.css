@@ -1,0 +1,69 @@
+.layer-switcher {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  display: flex;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 40px;
+  padding: 6px 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.layer-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  transition: background 0.18s, color 0.18s;
+  white-space: nowrap;
+}
+
+.layer-tab:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #222;
+}
+
+.layer-tab.active {
+  background: #2563eb;
+  color: #fff;
+}
+
+.layer-tab-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.layer-tab-count {
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.10);
+  color: #555;
+  border-radius: 10px;
+  padding: 1px 6px;
+  margin-left: 2px;
+  line-height: 1.6;
+}
+
+.layer-tab-count.active {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+/* Shift left by half the sidebar width when a right panel is open */
+.app--panel-open .layer-switcher {
+  transform: translateX(calc(-50% - 180px));
+}

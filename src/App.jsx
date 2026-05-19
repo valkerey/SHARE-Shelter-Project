@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { NotebookText } from 'lucide-react';
 import MapView from './components/MapView';
 import ControlSidebar from './components/ControlSidebar';
+import LayerSwitcher from './components/LayerSwitcher';
 import Sidebar from './components/Sidebar';
 import AddLocationForm from './components/AddLocationForm';
 import AddModeBanner from './components/AddModeBanner';
@@ -11,7 +13,13 @@ import SignInModal from './components/SignInModal';
 import ReviewQueuePanel from './components/ReviewQueuePanel';
 import RejectReasonModal from './components/RejectReasonModal';
 import useDataLoader from './hooks/useDataLoader';
+import useLocalData from './hooks/useLocalData';
 import { useScoring } from './hooks/useScoring';
+import HostSiteSidebar from './components/HostSiteSidebar';
+import AdminNotesPanel from './components/AdminNotesPanel';
+import Legend from './components/Legend';
+import TopBar from './components/TopBar';
+import * as turf from '@turf/turf';
 import {
   addLocation,
   addSuggestion,
@@ -28,10 +36,69 @@ import './App.css';
 
 function App() {
   const { locations, resources, loading, error, sources, refetchUserLocations } = useDataLoader();
+  const { localData, localLoading } = useLocalData();
   const { scoredLocations, priorities, setPriorities } = useScoring(locations, resources);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
+  // Layer switcher state
+  const [activeLayer, setActiveLayer] = useState(null);
+  const [selectedHostSite, setSelectedHostSite] = useState(null);
+  const [resourceToggles, setResourceToggles] = useState({
+    bike: true, transit: true, libraries: true,
+    healthcare: true, foodSocial: true, parks: true,
+  });
+
+  function handleLayerChange(layer) {
+    setActiveLayer((prev) => (prev === layer ? null : layer));
+    setSelectedHostSite(null);
+    setSelectedLocation(null);
+  }
+
+  function handleToggleResource(key) {
+    setResourceToggles((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
+  const QUARTER_MILE_M = 402;
+  const HALF_MILE_M = 804;
+
+  const hostSiteNearby = useMemo(() => {
+    if (!selectedHostSite || !localData) return null;
+    const toggleMap = { bikeInfra: 'bike', transit: 'transit', libraries: 'libraries', healthcare: 'healthcare', foodSocial: 'foodSocial' };
+    const activeResources = ['bikeInfra', 'transit', 'libraries', 'healthcare', 'foodSocial']
+      .filter(g => resourceToggles[toggleMap[g]] !== false)
+      .flatMap(g => localData[g] || []);
+    const result = activeResources.reduce(
+      (acc, r) => {
+        const dist = turf.distance(
+          turf.point([selectedHostSite.lng, selectedHostSite.lat]),
+          turf.point([r.lng, r.lat]),
+          { units: 'meters' },
+        );
+        if (dist <= QUARTER_MILE_M) acc.quarter.push({ ...r, _dist: dist });
+        else if (dist <= HALF_MILE_M) acc.half.push({ ...r, _dist: dist });
+        return acc;
+      },
+      { quarter: [], half: [], parksQuarter: 0, parksHalf: 0 },
+    );
+
+    if (resourceToggles.parks !== false && localData.parksGeoJSON) {
+      const qBuf = turf.circle([selectedHostSite.lng, selectedHostSite.lat], QUARTER_MILE_M / 1000, { units: 'kilometers' });
+      const hBuf = turf.circle([selectedHostSite.lng, selectedHostSite.lat], HALF_MILE_M / 1000, { units: 'kilometers' });
+      for (const f of localData.parksGeoJSON.features || []) {
+        try {
+          if (turf.booleanIntersects(f, qBuf)) result.parksQuarter++;
+          else if (turf.booleanIntersects(f, hBuf)) result.parksHalf++;
+        } catch { /* skip invalid geometries */ }
+      }
+    }
+
+    return result;
+  }, [selectedHostSite, localData, resourceToggles]);
+
   // Add/Edit mode state
+  const [controlSidebarCollapsed, setControlSidebarCollapsed] = useState(false);
+  const [controlSidebarHint, setControlSidebarHint] = useState(false);
+
   const [addMode, setAddMode] = useState(false);
   const [addCoords, setAddCoords] = useState(null);
   const [editingLocation, setEditingLocation] = useState(null);
@@ -41,8 +108,11 @@ function App() {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showSuggestionSuccess, setShowSuggestionSuccess] = useState(false);
   const [successEmail, setSuccessEmail] = useState('');
-  const [showReviewQueue, setShowReviewQueue] = useState(false);
-  const [rejectingRow, setRejectingRow] = useState(null);
+  const [showReviewQueue, setShowReviewQueue]   = useState(false);
+  const [showAdminNotes, setShowAdminNotes]     = useState(false);
+  const [showUnreviewedOnly, setShowUnreviewedOnly] = useState(false);
+  const [siteStatusVersion, setSiteStatusVersion]   = useState(0);
+  const [rejectingRow, setRejectingRow]         = useState(null);
 
   // Only churches and vacant buildings are valid host sites; community
   // centers/public facilities/nonprofits are amenities or aren't host sites at
@@ -268,18 +338,34 @@ function App() {
   const showEditForm = !!editingLocation;
   const showAddBanner = addMode && !addCoords && !editingLocation;
   const rightPanelOpen =
-    showSidebar || showAddForm || showEditForm || (isAdmin && showReviewQueue);
+    showSidebar || showAddForm || showEditForm || (isAdmin && showReviewQueue) || !!selectedHostSite;
 
   return (
-    <div className={`app${showAddBanner ? ' app--add-mode' : ''}`}>
+    <div className={`app${showAddBanner ? ' app--add-mode' : ''}${rightPanelOpen ? ' app--panel-open' : ''}`}>
+      <TopBar />
+
       <MapView
         scoredLocations={filteredLocations}
-        onPinClick={(loc) => { setSelectedLocation(loc); setAddCoords(null); setEditingLocation(null); }}
+        onPinClick={(loc) => { setSelectedLocation(loc); setAddCoords(null); setEditingLocation(null); setSelectedHostSite(null); }}
         selectedLocation={selectedLocation}
         resources={resources}
         onMapClick={handleMapClick}
         addMode={addMode}
         addCoords={addCoords}
+        activeLayer={activeLayer}
+        localData={localData}
+        resourceToggles={resourceToggles}
+        selectedHostSite={selectedHostSite}
+        onHostSiteClick={(site) => {
+          setSelectedHostSite(site);
+          setSelectedLocation(null);
+          setAddCoords(null);
+          setControlSidebarCollapsed(true);
+          setControlSidebarHint(true);
+        }}
+        hostSiteNearby={hostSiteNearby}
+        showUnreviewedOnly={showUnreviewedOnly}
+        siteStatusVersion={siteStatusVersion}
       />
 
       <ControlSidebar
@@ -287,6 +373,30 @@ function App() {
         onToggleType={handleToggleType}
         priorities={priorities}
         onUpdatePriorities={setPriorities}
+        resourceToggles={resourceToggles}
+        onToggleResource={handleToggleResource}
+        collapsed={controlSidebarCollapsed}
+        onSetCollapsed={(val) => {
+          setControlSidebarCollapsed(val);
+          if (!val) setControlSidebarHint(false);
+        }}
+        showHint={controlSidebarHint}
+      />
+
+      {(activeLayer === 'vacant' || activeLayer === 'churches') && (
+        <button
+          className={`unreviewed-filter${showUnreviewedOnly ? ' active' : ''}`}
+          onClick={() => setShowUnreviewedOnly(s => !s)}
+        >
+          ★ Unreviewed only
+        </button>
+      )}
+
+      <LayerSwitcher
+        activeLayer={activeLayer}
+        onLayerChange={handleLayerChange}
+        loading={localLoading}
+        counts={{ vacant: localData.vacantBuildings.length, churches: localData.churches.length }}
       />
 
       {/* ─── Top-right add button ─── */}
@@ -309,12 +419,20 @@ function App() {
       {isAdmin && (
         <button
           className="add-location-toggle"
-          style={{ top: 56 }}
+          style={{ top: 108 }}
           onClick={() => setShowReviewQueue((s) => !s)}
         >
           📋 Pending ({pendingLocations.length})
         </button>
       )}
+
+      <button
+        className="add-location-toggle"
+        style={{ top: 152 }}
+        onClick={() => setShowAdminNotes((s) => !s)}
+      >
+        <NotebookText size={14} style={{ marginRight: 5, verticalAlign: 'middle' }} /> Admin Notes
+      </button>
 
       {/* ─── Right panels ─── */}
       {showSidebar && (
@@ -324,6 +442,17 @@ function App() {
           onClose={() => setSelectedLocation(null)}
           onEdit={isAdmin && sidebarLocation.source === 'user' ? () => setEditingLocation(sidebarLocation) : undefined}
           onDelete={isAdmin && sidebarLocation.source === 'user' ? () => handleDelete(sidebarLocation) : undefined}
+        />
+      )}
+
+      {selectedHostSite && (
+        <HostSiteSidebar
+          site={selectedHostSite}
+          siteType={activeLayer === 'vacant' ? 'vacant' : 'churches'}
+          nearby={hostSiteNearby}
+          isAdmin={isAdmin}
+          onClose={() => setSelectedHostSite(null)}
+          onStatusChange={() => setSiteStatusVersion(v => v + 1)}
         />
       )}
 
@@ -357,6 +486,24 @@ function App() {
           onCancel={() => setEditingLocation(null)}
         />
       )}
+
+      {showAdminNotes && (
+        <AdminNotesPanel
+          localData={localData}
+          onClose={() => setShowAdminNotes(false)}
+          onSelectSite={(site, siteType, siteId) => {
+            setShowAdminNotes(false);
+            setActiveLayer(siteType === 'vacant' ? 'vacant' : 'churches');
+            setSelectedHostSite({ ...site, _id: siteId });
+            setSelectedLocation(null);
+            setAddCoords(null);
+            setControlSidebarCollapsed(true);
+            setControlSidebarHint(true);
+          }}
+        />
+      )}
+
+      <Legend />
 
       <DataSourceStatus sources={sources} />
 

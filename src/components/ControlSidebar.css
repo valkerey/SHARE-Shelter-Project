@@ -3,17 +3,18 @@
    with .control-sidebar in the JSX. */
 .control-sidebar {
   position: absolute;
-  top: 14px;
+  top: 66px;
   left: 14px;
   z-index: 1000;
   width: 290px;
-  max-height: calc(100vh - 28px);
+  max-height: calc(100vh - 80px);
   font-family: var(--font);
   padding: 18px 14px;
   display: flex;
   flex-direction: column;
   gap: 22px;
   overflow-y: auto;
+  overflow-x: visible;
 }
 
 .cs-section {
@@ -160,6 +161,71 @@
     0 1px 3px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
     inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.cs-collapse-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, color 0.18s;
+}
+
+.cs-collapse-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+.cs-expand-btn {
+  position: absolute;
+  top: 66px;
+  left: 14px;
+  z-index: 1000;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, color 0.18s;
+}
+
+.cs-expand-btn:hover {
+  color: #fff;
+}
+
+.cs-expand-hint {
+  display: flex;
+  gap: 6px;
+  width: auto;
+  padding: 0 14px;
+  animation: hintPulse 1.8s ease-in-out 3;
+}
+
+.cs-hint-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}
+
+@keyframes hintPulse {
+  0%, 100% { box-shadow: 0 4px 18px rgba(0,0,0,0.3), 0 0 0 0 rgba(255,255,255,0.0); }
+  50%       { box-shadow: 0 4px 18px rgba(0,0,0,0.3), 0 0 0 6px rgba(255,255,255,0.18); }
 }
 
 /* Scrollbar — barely there */

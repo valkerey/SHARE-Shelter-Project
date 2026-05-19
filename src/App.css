@@ -157,7 +157,7 @@ html, body, #root {
    primary CTA against the basemap. */
 .add-location-toggle {
   position: absolute;
-  top: 14px;
+  top: 66px;
   right: 14px;
   z-index: 1001;
   padding: 9px 18px;
@@ -165,6 +165,7 @@ html, body, #root {
   display: flex;
   align-items: center;
   gap: 6px;
+  transition: right 0.3s ease, background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04)),
     radial-gradient(140% 100% at 50% -20%, rgba(13, 148, 136, 0.55), transparent 60%),
@@ -182,6 +183,11 @@ html, body, #root {
     inset 0 1px 0 rgba(255, 255, 255, 0.30),
     inset 0 -1px 0 rgba(0, 0, 0, 0.20);
   transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+/* Shift top-right buttons left when a right panel is open */
+.app--panel-open .add-location-toggle {
+  right: calc(360px + 14px);
 }
 
 .add-location-toggle:hover {
@@ -204,6 +210,44 @@ html, body, #root {
     linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06)),
     radial-gradient(140% 100% at 50% -20%, rgba(239, 68, 68, 0.78), transparent 60%),
     var(--glass-tint);
+}
+
+/* ─── Unreviewed-only filter toggle ─── */
+.unreviewed-filter {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  transition: transform 0.3s ease, background 0.15s;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 40px;
+  padding: 6px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+  font-family: var(--font);
+}
+
+.unreviewed-filter:hover {
+  background: rgba(255, 255, 255, 1);
+  color: #222;
+}
+
+.unreviewed-filter.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+.app--panel-open .unreviewed-filter {
+  transform: translateX(calc(-50% - 180px));
 }
 
 /* ─── Emoji marker icons ─── */

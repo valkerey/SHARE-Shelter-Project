@@ -40,8 +40,9 @@ export default function Sidebar({ location, isAdmin = false, onClose, onEdit, on
     permitStatus,
   } = location;
 
-  const gmapsQuery = name && name !== 'Unknown' ? `${name} ${lat},${lng}` : `${lat},${lng}`;
-  const gmapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(gmapsQuery)}`;
+  const gmapsHref = address
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + ', Seattle, WA')}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lng}`)}`;
 
   function startContactEdit() {
     setContactDraft({

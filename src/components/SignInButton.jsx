@@ -3,12 +3,9 @@ import './SignInButton.css';
 export default function SignInButton({ user, onSignInClick, onSignOutClick }) {
   if (user) {
     return (
-      <div className="glass-button signin-badge">
-        <span className="signin-badge-email">✓ {user.email}</span>
-        <button type="button" className="signin-badge-logout" onClick={onSignOutClick}>
-          Sign out
-        </button>
-      </div>
+      <button type="button" className="glass-button signin-button" onClick={onSignOutClick}>
+        Sign out
+      </button>
     );
   }
   return (

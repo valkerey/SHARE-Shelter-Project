@@ -8,6 +8,15 @@ const LOCATION_TYPES = [
   { key: 'user', label: 'My Locations', icon: '📍' },
 ];
 
+export const RESOURCE_TOGGLES = [
+  { key: 'bike',       label: 'Bike Infrastructure',    icon: '🚲' },
+  { key: 'transit',    label: 'Transit',                icon: '🚌' },
+  { key: 'libraries',  label: 'Libraries',              icon: '📚' },
+  { key: 'healthcare', label: 'Healthcare',             icon: '🏥' },
+  { key: 'foodSocial', label: 'Food & Social Services', icon: '🍎' },
+  { key: 'parks',      label: 'Parks',                  icon: '🌳' },
+];
+
 const LEVELS = ['low', 'medium', 'high'];
 const LEVEL_LABELS = { low: 'Low', medium: 'Med', high: 'High' };
 const LEVEL_COLORS = { low: '#3b82f6', medium: '#fbbf24', high: '#34d399' };
@@ -17,8 +26,27 @@ export default function ControlSidebar({
   onToggleType,
   priorities,
   onUpdatePriorities,
+  resourceToggles,
+  onToggleResource,
+  collapsed,
+  onSetCollapsed,
+  showHint = false,
 }) {
   const [prioritiesOpen, setPrioritiesOpen] = useState(true);
+  const [resourcesOpen, setResourcesOpen] = useState(true);
+
+  if (collapsed) {
+    return (
+      <button
+        className={`cs-expand-btn glass-panel${showHint ? ' cs-expand-hint' : ''}`}
+        onClick={() => onSetCollapsed(false)}
+        title="Show controls"
+      >
+        ▶
+        {showHint && <span className="cs-hint-label">Controls</span>}
+      </button>
+    );
+  }
 
   function setPriority(category, level) {
     onUpdatePriorities({ ...priorities, [category]: level });
@@ -26,6 +54,13 @@ export default function ControlSidebar({
 
   return (
     <aside className="control-sidebar glass-panel">
+      <button
+        className="cs-collapse-btn"
+        onClick={() => onSetCollapsed(true)}
+        title="Hide controls"
+      >
+        ◀
+      </button>
       <section className="cs-section">
         <h3 className="cs-section-title">Show on Map</h3>
         {LOCATION_TYPES.map(({ key, label, icon }) => (
@@ -40,6 +75,31 @@ export default function ControlSidebar({
           </label>
         ))}
       </section>
+
+      {resourceToggles && onToggleResource && (
+        <section className="cs-section">
+          <button
+            type="button"
+            className="cs-section-title cs-section-toggle"
+            aria-expanded={resourcesOpen}
+            onClick={() => setResourcesOpen((open) => !open)}
+          >
+            <span>Resource Layers</span>
+            <span className={`cs-chevron${resourcesOpen ? ' open' : ''}`} aria-hidden="true">▸</span>
+          </button>
+          {resourcesOpen && RESOURCE_TOGGLES.map(({ key, label, icon }) => (
+            <label className="cs-filter-row" key={key}>
+              <input
+                type="checkbox"
+                checked={resourceToggles[key] !== false}
+                onChange={() => onToggleResource(key)}
+              />
+              <span className="cs-icon">{icon}</span>
+              <span className="cs-label">{label}</span>
+            </label>
+          ))}
+        </section>
+      )}
 
       <section className="cs-section">
         <button
