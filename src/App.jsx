@@ -351,7 +351,11 @@ function App() {
 
   return (
     <div className={`app${showAddBanner ? ' app--add-mode' : ''}${rightPanelOpen ? ' app--panel-open' : ''}`}>
-      <TopBar />
+      <TopBar
+        user={user}
+        onSignInClick={() => setShowSignInModal(true)}
+        onSignOutClick={signOut}
+      />
 
       <MapView
         scoredLocations={filteredLocations}
@@ -540,13 +544,6 @@ function App() {
       {/* Data Sources button — temporarily hidden, restore by uncommenting below */}
       {/* <DataSourceStatus sources={sources} /> */}
 
-      {!rightPanelOpen && (
-        <SignInButton
-          user={user}
-          onSignInClick={() => setShowSignInModal(true)}
-          onSignOutClick={signOut}
-        />
-      )}
 
       {isAdmin && showReviewQueue && (
         <ReviewQueuePanel

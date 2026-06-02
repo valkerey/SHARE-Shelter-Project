@@ -89,6 +89,9 @@ export default function HostSiteSidebar({ site, siteType, nearby, isAdmin, onClo
   const [photos, setPhotos]             = useState([]);
   const [photoLoading, setPhotoLoading] = useState(false);
   const [status, setStatus]             = useState('unreviewed');
+  const [contact, setContact]           = useState({ name: '', phone: '', email: '', website: '' });
+  const [editingContact, setEditingContact] = useState(false);
+  const [contactDraft, setContactDraft] = useState({ name: '', phone: '', email: '', website: '' });
   const fileInputRef                    = useRef(null);
 
   const siteKey = site?._id;
@@ -98,10 +101,19 @@ export default function HostSiteSidebar({ site, siteType, nearby, isAdmin, onClo
     setNotes(localStorage.getItem(`host-notes-${siteKey}`) || '');
     setStatus(localStorage.getItem(`host-status-${siteKey}`) || 'unreviewed');
     setEditingNotes(false);
+    setEditingContact(false);
     setExpanded({});
     try {
       setPhotos(JSON.parse(localStorage.getItem(`host-photos-${siteKey}`) || '[]'));
     } catch { setPhotos([]); }
+    // Contact: start from submitted data, then apply any admin overrides saved in localStorage
+    const base = site?.contact || {};
+    try {
+      const saved = JSON.parse(localStorage.getItem(`host-contact-${siteKey}`) || 'null');
+      setContact(saved || { name: base.name || '', phone: base.phone || '', email: base.email || '', website: base.website || '' });
+    } catch {
+      setContact({ name: base.name || '', phone: base.phone || '', email: base.email || '', website: base.website || '' });
+    }
   }, [siteKey]);
 
   function handleStatusChange(newStatus) {
@@ -172,6 +184,12 @@ export default function HostSiteSidebar({ site, siteType, nearby, isAdmin, onClo
     localStorage.setItem(`host-notes-${siteKey}`, notesDraft);
     setNotes(notesDraft);
     setEditingNotes(false);
+  }
+
+  function saveContact() {
+    localStorage.setItem(`host-contact-${siteKey}`, JSON.stringify(contactDraft));
+    setContact(contactDraft);
+    setEditingContact(false);
   }
 
   function toggleExpanded(key) {
@@ -377,6 +395,51 @@ export default function HostSiteSidebar({ site, siteType, nearby, isAdmin, onClo
           </button>
         </div>
       )}
+
+      {/* ── Contact Information ── */}
+      <div className="hss-notes-section">
+        <div className="sidebar-resources-title">Contact Information</div>
+        {!editingContact ? (
+          <>
+            {contact.name    && <div className="hss-row"><span className="hss-label">Name</span><span>{contact.name}</span></div>}
+            {contact.phone   && <div className="hss-row"><span className="hss-label">Phone</span><a href={`tel:${contact.phone}`} className="hss-addr-link">{contact.phone}</a></div>}
+            {contact.email   && <div className="hss-row"><span className="hss-label">Email</span><a href={`mailto:${contact.email}`} className="hss-addr-link">{contact.email}</a></div>}
+            {contact.website && <div className="hss-row"><span className="hss-label">Website</span><a href={contact.website} target="_blank" rel="noopener noreferrer" className="hss-addr-link">{contact.website}</a></div>}
+            {!contact.name && !contact.phone && !contact.email && !contact.website && (
+              <p className="hss-notes-text">No contact info yet.</p>
+            )}
+            {isAdmin && (
+              <button className="sidebar-contact-edit" onClick={() => { setContactDraft({ ...contact }); setEditingContact(true); }}>
+                {contact.name || contact.phone || contact.email || contact.website ? 'Edit Contact' : 'Add Contact'}
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            {[
+              { field: 'name',    label: 'Name',    type: 'text',  placeholder: 'Contact name' },
+              { field: 'phone',   label: 'Phone',   type: 'tel',   placeholder: '(206) 555-0123' },
+              { field: 'email',   label: 'Email',   type: 'email', placeholder: 'email@example.com' },
+              { field: 'website', label: 'Website', type: 'url',   placeholder: 'https://' },
+            ].map(({ field, label, type, placeholder }) => (
+              <div key={field} className="hss-contact-field">
+                <label className="hss-contact-label">{label}</label>
+                <input
+                  className="hss-notes-input hss-contact-input"
+                  type={type}
+                  value={contactDraft[field]}
+                  onChange={e => setContactDraft(prev => ({ ...prev, [field]: e.target.value }))}
+                  placeholder={placeholder}
+                />
+              </div>
+            ))}
+            <div className="contact-edit-actions">
+              <button className="contact-save-btn" onClick={saveContact}>Save</button>
+              <button className="contact-cancel-btn" onClick={() => setEditingContact(false)}>Cancel</button>
+            </div>
+          </>
+        )}
+      </div>
 
       {/* ── Footer: print + close ── */}
       <div className="hss-close-footer">
