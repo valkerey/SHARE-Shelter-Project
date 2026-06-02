@@ -8,7 +8,25 @@
 }
 
 .signin-button {
-  padding: 8px 16px;
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.signin-btn-label {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-left: 0;
+  transition: max-width 0.3s ease, opacity 0.25s ease, margin-left 0.3s ease;
+}
+
+.signin-button:hover .signin-btn-label {
+  max-width: 120px;
+  opacity: 1;
+  margin-left: 6px;
 }
 
 .signin-badge {

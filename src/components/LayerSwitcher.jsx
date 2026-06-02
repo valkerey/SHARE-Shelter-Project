@@ -20,7 +20,7 @@ export default function LayerSwitcher({ activeLayer, onLayerChange, loading = fa
             className={`layer-tab${active ? ' active' : ''}`}
             onClick={() => onLayerChange(key)}
             disabled={loading}
-            title={loading ? 'Loading data…' : undefined}
+            title={loading ? 'Loading data…' : label}
           >
             <span className="layer-tab-icon">
               {loading

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { NotebookText, ClipboardList } from 'lucide-react';
+import { NotebookText, ClipboardList, MapPin, X } from 'lucide-react';
 import MapView from './components/MapView';
 import ControlSidebar from './components/ControlSidebar';
 import LayerSwitcher from './components/LayerSwitcher';
@@ -424,7 +424,10 @@ function App() {
           }
         }}
       >
-        {addMode ? '✕ Cancel' : isAdmin ? '+ Add Location' : '+ Suggest a Location'}
+        {addMode ? <X size={14} /> : <MapPin size={14} />}
+        <span className="toggle-btn-label">
+          {addMode ? 'Cancel' : isAdmin ? 'Add Location' : 'Suggest a Location'}
+        </span>
       </button>
 
       <button
@@ -432,7 +435,8 @@ function App() {
         style={{ top: 108 }}
         onClick={() => setShowAdminNotes((s) => !s)}
       >
-        <NotebookText size={14} style={{ marginRight: 5, verticalAlign: 'middle' }} /> Admin Notes
+        <NotebookText size={14} />
+        <span className="toggle-btn-label">Admin Notes</span>
       </button>
 
       {isAdmin && (
@@ -441,7 +445,8 @@ function App() {
           style={{ top: 152 }}
           onClick={() => setShowReviewQueue((s) => !s)}
         >
-          <ClipboardList size={14} style={{ marginRight: 5, verticalAlign: 'middle' }} /> Pending ({pendingLocations.length})
+          <ClipboardList size={14} />
+          <span className="toggle-btn-label">Pending ({pendingLocations.length})</span>
         </button>
       )}
 

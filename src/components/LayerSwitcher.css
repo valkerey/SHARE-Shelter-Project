@@ -19,7 +19,7 @@
 .layer-tab {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0;
   padding: 8px 16px;
   border-radius: 32px;
   border: none;
@@ -28,7 +28,7 @@
   font-size: 13px;
   font-weight: 500;
   color: #555;
-  transition: background 0.18s, color 0.18s;
+  transition: background 0.18s, color 0.18s, padding 0.3s ease;
   white-space: nowrap;
 }
 
@@ -45,6 +45,15 @@
 .layer-tab-icon {
   font-size: 15px;
   line-height: 1;
+}
+
+.layer-tab-label {
+  display: inline-block;
+  max-width: 120px;
+  opacity: 1;
+  overflow: hidden;
+  margin-left: 6px;
+  transition: max-width 0.3s ease, opacity 0.25s ease, margin-left 0.3s ease;
 }
 
 .layer-tab-count {
@@ -66,4 +75,20 @@
 /* Shift left by half the sidebar width when a right panel is open */
 .app--panel-open .layer-switcher {
   transform: translateX(calc(-50% - 180px));
+}
+
+/* Icon-only mode when right panel is open */
+.app--panel-open .layer-tab {
+  padding: 8px 10px;
+}
+
+.app--panel-open .layer-tab-label {
+  max-width: 0;
+  opacity: 0;
+  margin-left: 0;
+  transition-delay: 0.05s;
+}
+
+.app--panel-open .layer-tab-count {
+  display: none;
 }

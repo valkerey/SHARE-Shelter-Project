@@ -160,7 +160,7 @@ html, body, #root {
   top: 66px;
   right: 14px;
   z-index: 1001;
-  padding: 9px 18px;
+  padding: 9px 12px;
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -193,6 +193,22 @@ html, body, #root {
 .app--panel-open .lgd-wrap {
   right: calc(360px + 16px);
   transition: right 0.25s ease;
+}
+
+.toggle-btn-label {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.3s ease, opacity 0.25s ease, margin-left 0.3s ease;
+  margin-left: 0;
+}
+
+.add-location-toggle:hover .toggle-btn-label {
+  max-width: 160px;
+  opacity: 1;
+  margin-left: 2px;
 }
 
 .add-location-toggle:hover {
