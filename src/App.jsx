@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { NotebookText } from 'lucide-react';
+import { NotebookText, ClipboardList } from 'lucide-react';
 import MapView from './components/MapView';
 import ControlSidebar from './components/ControlSidebar';
 import LayerSwitcher from './components/LayerSwitcher';
@@ -114,6 +114,7 @@ function App() {
   const [successEmail, setSuccessEmail] = useState('');
   const [showReviewQueue, setShowReviewQueue]   = useState(false);
   const [showAdminNotes, setShowAdminNotes]     = useState(false);
+  const [deletedSiteIds, setDeletedSiteIds]     = useState(new Set());
   const [showUnreviewedOnly, setShowUnreviewedOnly] = useState(false);
   const [siteStatusVersion, setSiteStatusVersion]   = useState(0);
   const [rejectingRow, setRejectingRow]         = useState(null);
@@ -346,7 +347,7 @@ function App() {
   const showEditForm = !!editingLocation;
   const showAddBanner = addMode && !addCoords && !editingLocation;
   const rightPanelOpen =
-    showSidebar || showAddForm || showEditForm || (isAdmin && showReviewQueue) || !!selectedHostSite;
+    showSidebar || showAddForm || showEditForm || (isAdmin && showReviewQueue) || !!selectedHostSite || showAdminNotes;
 
   return (
     <div className={`app${showAddBanner ? ' app--add-mode' : ''}${rightPanelOpen ? ' app--panel-open' : ''}`}>
@@ -375,6 +376,7 @@ function App() {
         showUnreviewedOnly={showUnreviewedOnly}
         siteStatusVersion={siteStatusVersion}
         approvedSuggestions={approvedSuggestions}
+        deletedSiteIds={deletedSiteIds}
       />
 
       <ControlSidebar
@@ -439,7 +441,7 @@ function App() {
           style={{ top: 152 }}
           onClick={() => setShowReviewQueue((s) => !s)}
         >
-          📋 Pending ({pendingLocations.length})
+          <ClipboardList size={14} style={{ marginRight: 5, verticalAlign: 'middle' }} /> Pending ({pendingLocations.length})
         </button>
       )}
 
@@ -457,16 +459,22 @@ function App() {
       {selectedHostSite && (
         <HostSiteSidebar
           site={selectedHostSite}
-          siteType={activeLayer === 'vacant' ? 'vacant' : 'churches'}
+          siteType={activeLayer === 'vacant' ? 'vacant' : activeLayer === 'suggested' ? 'suggested' : 'churches'}
           nearby={hostSiteNearby}
           isAdmin={isAdmin}
           onClose={() => setSelectedHostSite(null)}
           onStatusChange={() => setSiteStatusVersion(v => v + 1)}
-          onDelete={(site) => {
+          onDelete={async (site) => {
             const key = site._id;
             localStorage.removeItem(`host-status-${key}`);
             localStorage.removeItem(`host-notes-${key}`);
             localStorage.removeItem(`host-photos-${key}`);
+            if (site.supabaseId) {
+              await deleteLocation(site.supabaseId);
+              await refetchUserLocations();
+            } else {
+              setDeletedSiteIds(prev => new Set([...prev, key]));
+            }
             setSelectedHostSite(null);
             setSiteStatusVersion(v => v + 1);
           }}

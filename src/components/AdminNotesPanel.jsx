@@ -59,25 +59,22 @@ export default function AdminNotesPanel({ localData, onClose, onSelectSite }) {
   }, [localData]);
 
   return (
-    <div className="anp-overlay">
-      <div className="anp-panel glass-panel-strong">
-        <div className="anp-header">
-          <span className="anp-title">
-            Admin Notes
-            <span className="anp-count">{entries.length} / {totalSites}</span>
-          </span>
-          <button className="anp-close" onClick={onClose} aria-label="Close">
-            <X size={16} />
-          </button>
-        </div>
+    <div className="anp-panel">
+      <button className="anp-close" onClick={onClose} aria-label="Close">
+        <X size={20} />
+      </button>
+      <div className="anp-header">
+        <span className="anp-title">Admin Notes</span>
+        <span className="anp-count">{entries.length} / {totalSites}</span>
+      </div>
 
-        {entries.length === 0 ? (
-          <div className="anp-empty">No sites with notes yet.</div>
-        ) : (
-          <div className="anp-list">
-            {entries.map(({ id, notes, photos, status, site, siteType, name, subtitle }) => {
-              const sm = STATUS_META[status] || STATUS_META.unreviewed;
-              return (
+      {entries.length === 0 ? (
+        <div className="anp-empty">No sites with notes yet.</div>
+      ) : (
+        <div className="anp-list">
+          {entries.map(({ id, notes, photos, status, site, siteType, name, subtitle }) => {
+            const sm = STATUS_META[status] || STATUS_META.unreviewed;
+            return (
               <button
                 key={id}
                 className="anp-entry"
@@ -89,21 +86,16 @@ export default function AdminNotesPanel({ localData, onClose, onSelectSite }) {
                     {subtitle && <div className="anp-entry-sub">{subtitle}</div>}
                     <span className="anp-status" style={{ color: sm.color, borderColor: sm.color + '88', background: sm.color + '18' }}>{sm.label}</span>
                     {photos.length > 0 && (
-                      <img
-                        className="anp-entry-photo"
-                        src={photos[0]}
-                        alt="Site"
-                      />
+                      <img className="anp-entry-photo" src={photos[0]} alt="Site" />
                     )}
                   </div>
                   <div className="anp-entry-notes">{notes}</div>
                 </div>
               </button>
             );
-            })}
-          </div>
-        )}
-      </div>
+          })}
+        </div>
+      )}
     </div>
   );
 }

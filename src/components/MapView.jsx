@@ -424,6 +424,7 @@ export default function MapView({
   showUnreviewedOnly = false,
   siteStatusVersion = 0,
   approvedSuggestions = [],
+  deletedSiteIds = new Set(),
 }) {
   // Filter nearby resources within 1.2km of selected location (existing shelter scoring layer)
   const nearbyResources = selectedLocation
@@ -703,6 +704,7 @@ export default function MapView({
       {/* ── Layer 2: Viable Vacant Buildings ── */}
       {activeLayer === 'vacant' && (localData.vacantBuildings || []).map((bld, i) => {
         const id = `vacant-${i}`;
+        if (deletedSiteIds.has(id)) return null;
         const isSelected = selectedHostSite && selectedHostSite._id === id;
         const typeColor = VACANT_TYPE_COLORS[(bld.Building_Type || '').trim().toLowerCase()] || '#6366f1';
         const status = localStorage.getItem(`host-status-${id}`) || 'unreviewed';
@@ -723,6 +725,7 @@ export default function MapView({
       {/* ── Layer 3: Churches ── */}
       {activeLayer === 'churches' && (localData.churches || []).map((ch, i) => {
         const id = `church-${i}`;
+        if (deletedSiteIds.has(id)) return null;
         const isSelected = selectedHostSite && selectedHostSite._id === id;
         const name = ch.PROP_NAME || ch.name || ch.NAME || 'Church';
         const status = localStorage.getItem(`host-status-${id}`) || 'unreviewed';
