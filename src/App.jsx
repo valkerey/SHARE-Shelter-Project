@@ -379,20 +379,22 @@ function App() {
         deletedSiteIds={deletedSiteIds}
       />
 
-      <ControlSidebar
-        visibleTypes={visibleTypes}
-        onToggleType={handleToggleType}
-        priorities={priorities}
-        onUpdatePriorities={setPriorities}
-        resourceToggles={resourceToggles}
-        onToggleResource={handleToggleResource}
-        collapsed={controlSidebarCollapsed}
-        onSetCollapsed={(val) => {
-          setControlSidebarCollapsed(val);
-          if (!val) setControlSidebarHint(false);
-        }}
-        showHint={controlSidebarHint}
-      />
+      {!showAddBanner && (
+        <ControlSidebar
+          visibleTypes={visibleTypes}
+          onToggleType={handleToggleType}
+          priorities={priorities}
+          onUpdatePriorities={setPriorities}
+          resourceToggles={resourceToggles}
+          onToggleResource={handleToggleResource}
+          collapsed={controlSidebarCollapsed}
+          onSetCollapsed={(val) => {
+            setControlSidebarCollapsed(val);
+            if (!val) setControlSidebarHint(false);
+          }}
+          showHint={controlSidebarHint}
+        />
+      )}
 
       {(activeLayer === 'vacant' || activeLayer === 'churches') && (
         <button
@@ -426,7 +428,7 @@ function App() {
       >
         {addMode ? <X size={14} /> : <MapPin size={14} />}
         <span className="toggle-btn-label">
-          {addMode ? 'Cancel' : isAdmin ? 'Add Location' : 'Suggest a Location'}
+          {addMode ? 'Cancel' : 'Suggest a Location'}
         </span>
       </button>
 
