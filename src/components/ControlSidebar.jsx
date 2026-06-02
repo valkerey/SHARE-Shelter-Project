@@ -60,33 +60,10 @@ export default function ControlSidebar({
       >
         ◀
       </button>
-      <section className="cs-section">
-        <h3 className="cs-section-title">Show on Map</h3>
-        {LOCATION_TYPES.map(({ key, label, Icon }) => (
-          <label className="cs-filter-row" key={key}>
-            <input
-              type="checkbox"
-              checked={visibleTypes[key] !== false}
-              onChange={() => onToggleType(key)}
-            />
-            <span className="cs-icon"><Icon size={15} strokeWidth={2} /></span>
-            <span className="cs-label">{label}</span>
-          </label>
-        ))}
-      </section>
-
       {resourceToggles && onToggleResource && (
         <section className="cs-section">
-          <button
-            type="button"
-            className="cs-section-title cs-section-toggle"
-            aria-expanded={resourcesOpen}
-            onClick={() => setResourcesOpen((open) => !open)}
-          >
-            <span>Resource Layers</span>
-            <span className={`cs-chevron${resourcesOpen ? ' open' : ''}`} aria-hidden="true">▸</span>
-          </button>
-          {resourcesOpen && RESOURCE_TOGGLES.map(({ key, label, Icon, color, subcategories }) => (
+          <h3 className="cs-section-title">Resource Layers</h3>
+          {RESOURCE_TOGGLES.map(({ key, label, Icon, color, subcategories }) => (
             <div key={key}>
               <label className="cs-filter-row">
                 <input

@@ -1,10 +1,11 @@
-import { Layers, Building2, Church, Loader } from 'lucide-react';
+import { Layers, Building2, Church, MapPin, Loader } from 'lucide-react';
 import './LayerSwitcher.css';
 
 const LAYERS = [
-  { key: 'resources', label: 'Resources',        Icon: Layers,    countKey: null        },
-  { key: 'vacant',    label: 'Vacant Buildings',  Icon: Building2, countKey: 'vacant'    },
-  { key: 'churches',  label: 'Churches',          Icon: Church,    countKey: 'churches'  },
+  { key: 'resources',  label: 'Resources',           Icon: Layers,    countKey: null        },
+  { key: 'vacant',     label: 'Vacant Buildings',     Icon: Building2, countKey: 'vacant'    },
+  { key: 'churches',   label: 'Churches',             Icon: Church,    countKey: 'churches'  },
+  { key: 'suggested',  label: 'Suggested',  Icon: MapPin,    countKey: 'suggested' },
 ];
 
 export default function LayerSwitcher({ activeLayer, onLayerChange, loading = false, counts = {} }) {

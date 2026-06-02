@@ -98,6 +98,29 @@ function ChurchesLegend() {
   );
 }
 
+function SuggestedLegend() {
+  return (
+    <>
+      <section className="lgd-section">
+        <div className="lgd-section-title">Vetting Status</div>
+        {STATUSES.map(({ border, star, label }) => (
+          <div key={label} className="lgd-row">
+            <Circle fill="#4B5563" border={border} star={star} />
+            <span>{label}</span>
+          </div>
+        ))}
+      </section>
+      <section className="lgd-section lgd-section--last">
+        <div className="lgd-section-title">Suggested Locations</div>
+        <div className="lgd-row">
+          <Circle fill="#22C55E" border="rgba(255,255,255,0.7)" star={false} />
+          <span>Approved Suggestion</span>
+        </div>
+      </section>
+    </>
+  );
+}
+
 export default function Legend({ activeLayer }) {
   const [open, setOpen] = useState(false);
 
@@ -105,9 +128,10 @@ export default function Legend({ activeLayer }) {
     <div className="lgd-wrap">
       {open && (
         <div className="lgd-panel glass-panel-strong">
-          {activeLayer === 'resources' && <ResourcesLegend />}
-          {activeLayer === 'vacant'    && <VacantLegend />}
-          {activeLayer === 'churches'  && <ChurchesLegend />}
+          {activeLayer === 'resources'  && <ResourcesLegend />}
+          {activeLayer === 'vacant'     && <VacantLegend />}
+          {activeLayer === 'churches'   && <ChurchesLegend />}
+          {activeLayer === 'suggested'  && <SuggestedLegend />}
           {!activeLayer && <VacantLegend />}
         </div>
       )}

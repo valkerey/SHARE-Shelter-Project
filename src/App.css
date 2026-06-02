@@ -5,8 +5,8 @@
   /* Liquid glass — the default surface treatment for every floating panel,
      popup, and button in the app. New components should use the .glass-panel
      / .glass-button utility classes below instead of solid panel backgrounds. */
-  --glass-tint: rgba(20, 20, 36, 0.62);
-  --glass-tint-strong: rgba(18, 18, 32, 0.78);
+  --glass-tint: rgba(20, 20, 36, 0.88);
+  --glass-tint-strong: rgba(18, 18, 32, 0.93);
   --glass-border: rgba(255, 255, 255, 0.18);
   --glass-blur: blur(36px) saturate(180%);
   --glass-radius: 22px;

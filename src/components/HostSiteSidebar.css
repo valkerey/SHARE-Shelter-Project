@@ -286,6 +286,28 @@
   background: rgba(147, 197, 253, 0.20);
 }
 
+.hss-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.10);
+  border: 1px solid rgba(239, 68, 68, 0.30);
+  color: #f87171;
+  font-size: 13px;
+  padding: 7px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  flex: 1;
+  justify-content: center;
+  font-family: var(--font);
+}
+
+.hss-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.50);
+}
+
 .hss-photo-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

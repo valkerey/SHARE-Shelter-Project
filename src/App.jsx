@@ -142,6 +142,10 @@ function App() {
     (loc) => loc.source === 'user' && loc.status === 'pending'
   );
 
+  const approvedSuggestions = scoredLocations.filter(
+    (loc) => loc.source === 'user' && loc.status === 'approved'
+  );
+
   // Re-resolve the selected location against the freshly scored list so the
   // sidebar reflects the latest priority changes (not the snapshot taken at click time).
   const sidebarLocation = selectedLocation
@@ -370,6 +374,7 @@ function App() {
         hostSiteNearby={hostSiteNearby}
         showUnreviewedOnly={showUnreviewedOnly}
         siteStatusVersion={siteStatusVersion}
+        approvedSuggestions={approvedSuggestions}
       />
 
       <ControlSidebar
@@ -400,7 +405,7 @@ function App() {
         activeLayer={activeLayer}
         onLayerChange={handleLayerChange}
         loading={localLoading}
-        counts={{ vacant: localData.vacantBuildings.length, churches: localData.churches.length }}
+        counts={{ vacant: localData.vacantBuildings.length, churches: localData.churches.length, suggested: approvedSuggestions.length }}
       />
 
       {/* ─── Top-right add button ─── */}
@@ -457,6 +462,14 @@ function App() {
           isAdmin={isAdmin}
           onClose={() => setSelectedHostSite(null)}
           onStatusChange={() => setSiteStatusVersion(v => v + 1)}
+          onDelete={(site) => {
+            const key = site._id;
+            localStorage.removeItem(`host-status-${key}`);
+            localStorage.removeItem(`host-notes-${key}`);
+            localStorage.removeItem(`host-photos-${key}`);
+            setSelectedHostSite(null);
+            setSiteStatusVersion(v => v + 1);
+          }}
         />
       )}
 

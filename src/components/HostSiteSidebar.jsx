@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ExternalLink, ChevronDown, ChevronRight, Paperclip, X, Printer, Bike, Bus, Library, HeartPulse, ShoppingBasket, TreePine } from 'lucide-react';
+import { ExternalLink, ChevronDown, ChevronRight, Paperclip, X, Printer, Bike, Bus, Library, HeartPulse, ShoppingBasket, TreePine, Trash2 } from 'lucide-react';
 import { downsizeImage } from '../utils/downsizeImage';
 import { printSiteCard } from '../utils/printSiteCard';
 import './HostSiteSidebar.css';
@@ -81,7 +81,7 @@ const RESOURCE_TYPES = [
   },
 ];
 
-export default function HostSiteSidebar({ site, siteType, nearby, isAdmin, onClose, onStatusChange }) {
+export default function HostSiteSidebar({ site, siteType, nearby, isAdmin, onClose, onStatusChange, onDelete }) {
   const [notes, setNotes]               = useState('');
   const [editingNotes, setEditingNotes] = useState(false);
   const [notesDraft, setNotesDraft]     = useState('');
@@ -394,6 +394,18 @@ export default function HostSiteSidebar({ site, siteType, nearby, isAdmin, onClo
         >
           <Printer size={13} /> Print Summary
         </button>
+        {isAdmin && ['in-progress', 'promising', 'not-viable'].includes(status) && (
+          <button
+            className="hss-delete-btn"
+            onClick={() => {
+              if (window.confirm('Are you sure you want to delete this location? This cannot be undone.')) {
+                onDelete?.(site);
+              }
+            }}
+          >
+            <Trash2 size={13} /> Delete Location
+          </button>
+        )}
         <button className="hss-close-btn" onClick={onClose}>Close</button>
       </div>
     </div>

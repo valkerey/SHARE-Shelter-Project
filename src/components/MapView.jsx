@@ -423,6 +423,7 @@ export default function MapView({
   hostSiteNearby = null,
   showUnreviewedOnly = false,
   siteStatusVersion = 0,
+  approvedSuggestions = [],
 }) {
   // Filter nearby resources within 1.2km of selected location (existing shelter scoring layer)
   const nearbyResources = selectedLocation
@@ -734,6 +735,25 @@ export default function MapView({
             eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onHostSiteClick && onHostSiteClick({ ...ch, _id: id }); } }}
           >
             <Tooltip>{name}</Tooltip>
+          </Marker>
+        );
+      })}
+
+      {/* ── Layer 4: Suggested Locations (approved user submissions) ── */}
+      {activeLayer === 'suggested' && approvedSuggestions.map((loc) => {
+        const id = `suggested-${loc.id}`;
+        const isSelected = selectedHostSite && selectedHostSite._id === id;
+        const status = localStorage.getItem(`host-status-${id}`) || 'unreviewed';
+        if (showUnreviewedOnly && status !== 'unreviewed') return null;
+        return (
+          <Marker
+            key={id}
+            position={[loc.lat, loc.lng]}
+            icon={hostSiteIcon('#22C55E', isSelected, status)}
+            bubblingMouseEvents={false}
+            eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onHostSiteClick && onHostSiteClick({ ...loc, _id: id }); } }}
+          >
+            <Tooltip>{loc.name || 'Suggested Location'}</Tooltip>
           </Marker>
         );
       })}
