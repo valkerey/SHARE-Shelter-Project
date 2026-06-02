@@ -10,7 +10,8 @@ const LAYERS = [
 
 export default function LayerSwitcher({ activeLayer, onLayerChange, loading = false, counts = {} }) {
   return (
-    <div className="layer-switcher">
+    <div className="layer-switcher-wrap">
+<div className="layer-switcher">
       {LAYERS.map(({ key, label, Icon, countKey }) => {
         const active = activeLayer === key;
         const count = countKey != null ? counts[countKey] : null;
@@ -34,6 +35,7 @@ export default function LayerSwitcher({ activeLayer, onLayerChange, loading = fa
           </button>
         );
       })}
+      </div>
     </div>
   );
 }

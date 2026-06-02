@@ -1,4 +1,4 @@
-.layer-switcher {
+.layer-switcher-wrap {
   position: absolute;
   bottom: 36px;
   left: 50%;
@@ -6,14 +6,30 @@
   z-index: 1000;
   transition: transform 0.3s ease;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+}
+
+.layer-switcher-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.layer-switcher {
+  display: flex;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 40px;
   padding: 6px 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.28), 0 2px 8px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 .layer-tab {
@@ -49,21 +65,28 @@
 
 .layer-tab-label {
   display: inline-block;
-  max-width: 120px;
-  opacity: 1;
+  max-width: 0;
+  opacity: 0;
   overflow: hidden;
-  margin-left: 6px;
+  margin-left: 0;
   transition: max-width 0.3s ease, opacity 0.25s ease, margin-left 0.3s ease;
 }
 
+.layer-tab:hover .layer-tab-label {
+  max-width: 120px;
+  opacity: 1;
+  margin-left: 6px;
+}
+
 .layer-tab-count {
+  display: none;
   font-size: 11px;
   font-weight: 600;
   background: rgba(0, 0, 0, 0.10);
   color: #555;
   border-radius: 10px;
   padding: 1px 6px;
-  margin-left: 2px;
+  margin-left: 4px;
   line-height: 1.6;
 }
 
@@ -72,23 +95,11 @@
   color: #fff;
 }
 
+.layer-tab:hover .layer-tab-count {
+  display: inline;
+}
+
 /* Shift left by half the sidebar width when a right panel is open */
-.app--panel-open .layer-switcher {
-  transform: translateX(calc(-50% - 180px));
-}
-
-/* Icon-only mode when right panel is open */
-.app--panel-open .layer-tab {
-  padding: 8px 10px;
-}
-
-.app--panel-open .layer-tab-label {
-  max-width: 0;
-  opacity: 0;
-  margin-left: 0;
-  transition-delay: 0.05s;
-}
-
-.app--panel-open .layer-tab-count {
-  display: none;
+.app--panel-open .layer-switcher-wrap {
+  transform: translateX(calc(-50% - 190px));
 }

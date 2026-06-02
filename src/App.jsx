@@ -396,7 +396,7 @@ function App() {
         />
       )}
 
-      {(activeLayer === 'vacant' || activeLayer === 'churches') && (
+      {(activeLayer === 'vacant' || activeLayer === 'churches' || activeLayer === 'suggested') && (
         <button
           className={`unreviewed-filter${showUnreviewedOnly ? ' active' : ''}`}
           onClick={() => setShowUnreviewedOnly(s => !s)}

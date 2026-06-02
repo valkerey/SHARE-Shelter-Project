@@ -205,10 +205,10 @@ function HomeButton() {
   return (
     <button
       onClick={() => map.flyTo(SEATTLE_CENTER, SEATTLE_ZOOM, { duration: 0.8 })}
-      title="Reset view"
+      title="Recenter"
       style={{
         position: 'absolute',
-        bottom: 90,
+        bottom: 170,
         right: 10,
         zIndex: 1000,
         width: 34,
@@ -472,7 +472,6 @@ export default function MapView({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
-      <ZoomControl position="bottomright" />
       <HomeButton />
 
       <MapController selectedLocation={selectedLocation} addCoords={addCoords} />
