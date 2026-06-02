@@ -249,10 +249,12 @@
   top: 66px;
   left: 8px;
   z-index: 1000;
-  width: 40px;
+  width: auto;
   height: 40px;
+  padding: 0 14px;
+  gap: 6px;
   border: none;
-  border-radius: 50%;
+  border-radius: 999px;
   font-size: 13px;
   cursor: pointer;
   color: rgba(255, 255, 255, 0.9);

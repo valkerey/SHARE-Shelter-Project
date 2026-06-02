@@ -39,10 +39,10 @@ export default function ControlSidebar({
       <button
         className={`cs-expand-btn glass-panel${showHint ? ' cs-expand-hint' : ''}`}
         onClick={() => onSetCollapsed(false)}
-        title="Show controls"
+        title="Toggle Resources"
       >
         ▶
-        {showHint && <span className="cs-hint-label">Controls</span>}
+        <span className="cs-hint-label">Toggle Resources</span>
       </button>
     );
   }
@@ -62,7 +62,7 @@ export default function ControlSidebar({
       </button>
       {resourceToggles && onToggleResource && (
         <section className="cs-section">
-          <h3 className="cs-section-title">Resource Layers</h3>
+          <h3 className="cs-section-title">Toggle Resources</h3>
           {RESOURCE_TOGGLES.map(({ key, label, Icon, color, subcategories }) => (
             <div key={key}>
               <label className="cs-filter-row">
