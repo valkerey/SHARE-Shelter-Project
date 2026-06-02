@@ -185,9 +185,14 @@ html, body, #root {
   transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
-/* Shift top-right buttons left when a right panel is open */
+/* Shift top-right buttons and legend left when a right panel is open */
 .app--panel-open .add-location-toggle {
   right: calc(360px + 14px);
+}
+
+.app--panel-open .lgd-wrap {
+  right: calc(360px + 16px);
+  transition: right 0.25s ease;
 }
 
 .add-location-toggle:hover {

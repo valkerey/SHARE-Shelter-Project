@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Home, MapPin } from 'lucide-react';
 import './AddLocationForm.css';
 
 const LOCATION_TYPES = [
@@ -100,7 +101,7 @@ export default function AddLocationForm({
           className="mode-picker-btn"
           onClick={() => setMode('owner')}
         >
-          🏠 I&apos;m offering my own property
+          <Home size={15} strokeWidth={2} style={{ marginRight: 6, verticalAlign: 'middle', flexShrink: 0 }} /> I&apos;m offering my own property
           <span className="mode-picker-sub">Church, building owner, etc.</span>
         </button>
         <button
@@ -108,7 +109,7 @@ export default function AddLocationForm({
           className="mode-picker-btn"
           onClick={() => setMode('third_party')}
         >
-          📍 I want to suggest a property I know about
+          <MapPin size={15} strokeWidth={2} style={{ marginRight: 6, verticalAlign: 'middle', flexShrink: 0 }} /> I want to suggest a property I know about
           <span className="mode-picker-sub">Place I drove past, vacant lot, etc.</span>
         </button>
         <button type="button" className="form-cancel-btn" onClick={onCancel}>

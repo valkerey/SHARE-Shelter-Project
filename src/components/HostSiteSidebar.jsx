@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ExternalLink, ChevronDown, ChevronRight, Paperclip, X, Printer } from 'lucide-react';
+import { ExternalLink, ChevronDown, ChevronRight, Paperclip, X, Printer, Bike, Bus, Library, HeartPulse, ShoppingBasket, TreePine } from 'lucide-react';
 import { downsizeImage } from '../utils/downsizeImage';
 import { printSiteCard } from '../utils/printSiteCard';
 import './HostSiteSidebar.css';
@@ -27,6 +27,7 @@ const RESOURCE_TYPES = [
   {
     key: 'bike',
     label: 'Bike Infrastructure',
+    Icon: Bike,
     color: '#FCA5A5',
     subcategories: [
       { key: 'locker', label: 'Bike Lockers', match: (r) => !!r.BICYCLE_STORAGE_TYPE },
@@ -36,6 +37,7 @@ const RESOURCE_TYPES = [
   {
     key: 'transit',
     label: 'Transit',
+    Icon: Bus,
     color: '#3B82F6',
     subcategories: [
       { key: 'bus',  label: 'Bus Stops',      match: (r) => r._subtype !== 'rail' },
@@ -45,6 +47,7 @@ const RESOURCE_TYPES = [
   {
     key: 'libraries',
     label: 'Libraries',
+    Icon: Library,
     color: '#A78BFA',
     subcategories: [
       { key: 'library', label: 'Libraries', match: () => true },
@@ -53,6 +56,7 @@ const RESOURCE_TYPES = [
   {
     key: 'healthcare',
     label: 'Healthcare',
+    Icon: HeartPulse,
     color: '#D95319',
     subcategories: [
       { key: 'facility', label: 'Healthcare Facilities', match: () => true },
@@ -61,6 +65,7 @@ const RESOURCE_TYPES = [
   {
     key: 'foodSocial',
     label: 'Food & Social Services',
+    Icon: ShoppingBasket,
     color: '#FBBF24',
     subcategories: [
       { key: 'food',      label: 'Food Banks',        match: (r) => !!(r.Food_Resource_Type || r.Agency) },
@@ -70,6 +75,7 @@ const RESOURCE_TYPES = [
   {
     key: 'parks',
     label: 'Parks',
+    Icon: TreePine,
     color: '#34D399',
     subcategories: [],
   },
@@ -261,7 +267,7 @@ export default function HostSiteSidebar({ site, siteType, nearby, isAdmin, onClo
         <span><span className="hss-dot" style={{ background: '#f59e0b' }} /> ½ mile</span>
       </div>
 
-      {RESOURCE_TYPES.map(({ key, label, color, subcategories }) => {
+      {RESOURCE_TYPES.map(({ key, label, Icon, color, subcategories }) => {
         const q = counts[key].quarter;
         const h = counts[key].half;
         const isOpen = !!expanded[key];
@@ -273,7 +279,7 @@ export default function HostSiteSidebar({ site, siteType, nearby, isAdmin, onClo
               className={`resource-row${hasMultipleSubs ? ' resource-row--clickable' : ''}`}
               onClick={hasMultipleSubs ? () => toggleExpanded(key) : undefined}
             >
-              <span className="hss-type-dot" style={{ background: color }} />
+              <Icon size={14} color={color} className="hss-type-icon" />
               <span className="resource-name">{label}</span>
               <span className="hss-count-pair">
                 <span style={{ color: q > 0 ? '#22c55e' : 'rgba(255,255,255,0.25)', fontWeight: 600 }}>{q}</span>

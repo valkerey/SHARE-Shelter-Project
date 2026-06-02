@@ -229,12 +229,36 @@ function HomeButton() {
 }
 
 function getActiveLocalResources(localData, resourceToggles) {
-  const groups = ['bikeInfra', 'transit', 'libraries', 'healthcare', 'foodSocial'];
-  const toggleMap = { bikeInfra: 'bike', transit: 'transit', libraries: 'libraries',
-    healthcare: 'healthcare', foodSocial: 'foodSocial' };
-  return groups
-    .filter((g) => resourceToggles[toggleMap[g]] !== false)
-    .flatMap((g) => localData[g] || []);
+  const t = resourceToggles;
+  const results = [];
+  if (t.bike !== false) {
+    (localData.bikeInfra || []).forEach((r) => {
+      const isLocker = !!r.BICYCLE_STORAGE_TYPE;
+      if (isLocker  && t.bike_locker !== false) results.push(r);
+      if (!isLocker && t.bike_rack   !== false) results.push(r);
+    });
+  }
+  if (t.transit !== false) {
+    (localData.transit || []).forEach((r) => {
+      const isRail = r._subtype === 'rail';
+      if (isRail  && t.rail !== false) results.push(r);
+      if (!isRail && t.bus  !== false) results.push(r);
+    });
+  }
+  if (t.libraries !== false && t.library !== false) {
+    results.push(...(localData.libraries || []));
+  }
+  if (t.healthcare !== false && t.healthcare_facility !== false) {
+    results.push(...(localData.healthcare || []));
+  }
+  if (t.foodSocial !== false) {
+    (localData.foodSocial || []).forEach((r) => {
+      const isFoodBank = !!(r.Food_Resource_Type || r.Agency);
+      if (isFoodBank  && t.food_bank        !== false) results.push(r);
+      if (!isFoodBank && t.community_center !== false) results.push(r);
+    });
+  }
+  return results;
 }
 
 const RESOURCE_ICONS = {
@@ -517,8 +541,8 @@ export default function MapView({
         </>
       )}
 
-      {/* Scored location pins */}
-      {scoredLocations.map((loc) => {
+      {/* Scored location pins — temporarily hidden, restore by uncommenting below */}
+      {/* {scoredLocations.map((loc) => {
         const isSelected = selectedLocation && selectedLocation.id === loc.id;
         const isPending = loc.status === 'pending';
         return (
@@ -545,7 +569,7 @@ export default function MapView({
             </Tooltip>
           </CircleMarker>
         );
-      })}
+      })} */}
 
       {/* Nearby resource markers */}
       {nearbyResources.map((r, i) => {

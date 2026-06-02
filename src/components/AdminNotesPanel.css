@@ -5,7 +5,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
-  padding: 16px;
+  padding: 148px 16px 16px;
   pointer-events: none;
 }
 

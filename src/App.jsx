@@ -41,11 +41,15 @@ function App() {
   const [selectedLocation, setSelectedLocation] = useState(null);
 
   // Layer switcher state
-  const [activeLayer, setActiveLayer] = useState(null);
+  const [activeLayer, setActiveLayer] = useState('resources');
   const [selectedHostSite, setSelectedHostSite] = useState(null);
   const [resourceToggles, setResourceToggles] = useState({
-    bike: true, transit: true, libraries: true,
-    healthcare: true, foodSocial: true, parks: true,
+    bike: true,       bike_locker: true, bike_rack: true,
+    transit: true,    bus: true,         rail: true,
+    libraries: true,  library: true,
+    healthcare: true, healthcare_facility: true,
+    foodSocial: true, food_bank: true,   community_center: true,
+    parks: true,
   });
 
   function handleLayerChange(layer) {
@@ -416,23 +420,23 @@ function App() {
         {addMode ? '✕ Cancel' : isAdmin ? '+ Add Location' : '+ Suggest a Location'}
       </button>
 
+      <button
+        className="add-location-toggle"
+        style={{ top: 108 }}
+        onClick={() => setShowAdminNotes((s) => !s)}
+      >
+        <NotebookText size={14} style={{ marginRight: 5, verticalAlign: 'middle' }} /> Admin Notes
+      </button>
+
       {isAdmin && (
         <button
           className="add-location-toggle"
-          style={{ top: 108 }}
+          style={{ top: 152 }}
           onClick={() => setShowReviewQueue((s) => !s)}
         >
           📋 Pending ({pendingLocations.length})
         </button>
       )}
-
-      <button
-        className="add-location-toggle"
-        style={{ top: 152 }}
-        onClick={() => setShowAdminNotes((s) => !s)}
-      >
-        <NotebookText size={14} style={{ marginRight: 5, verticalAlign: 'middle' }} /> Admin Notes
-      </button>
 
       {/* ─── Right panels ─── */}
       {showSidebar && (
@@ -503,9 +507,10 @@ function App() {
         />
       )}
 
-      <Legend />
+      <Legend activeLayer={activeLayer} />
 
-      <DataSourceStatus sources={sources} />
+      {/* Data Sources button — temporarily hidden, restore by uncommenting below */}
+      {/* <DataSourceStatus sources={sources} /> */}
 
       {!rightPanelOpen && (
         <SignInButton

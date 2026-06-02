@@ -1,3 +1,4 @@
+import { Lock } from 'lucide-react';
 import './SignInButton.css';
 
 export default function SignInButton({ user, onSignInClick, onSignOutClick }) {
@@ -10,7 +11,8 @@ export default function SignInButton({ user, onSignInClick, onSignOutClick }) {
   }
   return (
     <button type="button" className="glass-button signin-button" onClick={onSignInClick}>
-      🔒 Admin sign in
+      <Lock size={13} strokeWidth={2} style={{ marginRight: 5, verticalAlign: 'middle' }} />
+      Admin sign in
     </button>
   );
 }

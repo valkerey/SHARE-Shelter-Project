@@ -1,10 +1,10 @@
 .add-mode-banner {
   position: absolute;
-  top: 14px;
-  left: 50%;
+  top: 66px;
+  left: calc(50% + 70px);
   transform: translateX(-50%);
   z-index: 1000;
-  width: min(420px, calc(100vw - 180px));
+  width: min(420px, calc(100vw - 468px));
   padding: 14px 16px 12px;
   color: #fff;
   display: flex;

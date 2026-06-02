@@ -92,6 +92,13 @@
   margin-right: 6px;
 }
 
+.hss-type-icon {
+  flex-shrink: 0;
+  margin-right: 6px;
+  font-size: 14px;
+  line-height: 1;
+}
+
 .hss-count-pair {
   font-size: 14px;
   display: flex;

@@ -2,10 +2,10 @@
 /* Layout only — visual treatment comes from .glass-panel-strong. */
 .add-location-form {
   position: absolute;
-  top: 0;
+  top: 52px;
   right: 0;
   width: 360px;
-  height: 100vh;
+  height: calc(100vh - 52px);
   z-index: 1000;
   overflow-y: auto;
   padding: 20px;
